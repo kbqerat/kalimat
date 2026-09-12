@@ -1,26 +1,218 @@
 @import "tailwindcss";
 
+/* ------------------------------------------------------------------ *
+ *  Clean consumer-shop design system (montessoribox-style)
+ * ------------------------------------------------------------------ */
+
+@theme {
+  /* Surfaces */
+  --color-canvas: #f5f7fb;
+  --color-paper: #ffffff;
+  --color-paper-deep: #eef1f8;
+  --color-line: #e5e8f0;
+
+  /* Text */
+  --color-ink: #1b2130;
+  --color-ink-soft: #6b7280;
+
+  /* Brand + accents (legacy `riso-*` names kept, remapped) */
+  --color-brand: #2f3aa3;
+  --color-brand-dark: #232c82;
+  --color-riso-blue: #2f3aa3;
+  --color-riso-orange: #e4322b;
+  --color-riso-yellow: #f6b73c;
+  --color-riso-teal: #12b76a;
+  --color-riso-green: #12b76a;
+  --color-riso-pink: #ec4899;
+  --color-riso-purple: #7c3aed;
+
+  /* Type — Readex Pro covers Latin + Arabic */
+  --font-display: var(--font-readex), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-readex), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-readex), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 1rem;
+  --shadow-soft: 0 1px 2px rgba(20, 28, 60, 0.04), 0 8px 24px rgba(20, 28, 60, 0.08);
+  --ease-snap: cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --page-margin: 1.25rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background-color: var(--color-canvas);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-brand) 20%, transparent);
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+}
+
+/* ---- Components ------------------------------------------------- */
+
+@layer components {
+  .card {
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    padding: 0.75rem 1.4rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    line-height: 1;
+    transition:
+      transform 0.12s var(--ease-snap),
+      background-color 0.15s,
+      box-shadow 0.15s,
+      opacity 0.15s;
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
+  .btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .btn-primary {
+    background: var(--color-riso-orange);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(228, 50, 43, 0.28);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: #c92a24;
+  }
+
+  .btn-brand {
+    background: var(--color-brand);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(47, 58, 163, 0.24);
+  }
+  .btn-brand:hover:not(:disabled) {
+    background: var(--color-brand-dark);
+  }
+
+  .btn-ghost {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    border: 1px solid var(--color-line);
+  }
+  .btn-ghost:hover:not(:disabled) {
+    background: var(--color-paper-deep);
+  }
+
+  .badge-sale {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    background: var(--color-riso-orange);
+    color: #fff;
+    padding: 0.15rem 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    background: var(--color-paper-deep);
+    color: var(--color-brand);
+    padding: 0.2rem 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .field {
+    width: 100%;
+    border: 1px solid var(--color-line);
+    border-radius: 0.7rem;
+    background: var(--color-paper);
+    padding: 0.6rem 0.8rem;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: var(--color-ink);
+    outline: none;
+    appearance: none;
+  }
+  .field:focus-visible {
+    border-color: var(--color-brand);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-brand) 20%, transparent);
+  }
+  .field::placeholder {
+    color: color-mix(in oklab, var(--color-ink) 38%, transparent);
+  }
+  textarea.field {
+    resize: vertical;
+  }
+
+  /* Back-compat alias — older forms still use `.riso-input` */
+  .riso-input {
+    width: 100%;
+    border: 1px solid var(--color-line);
+    border-radius: 0.7rem;
+    background: var(--color-paper);
+    padding: 0.6rem 0.8rem;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: var(--color-ink);
+    outline: none;
+    appearance: none;
+  }
+  .riso-input:focus-visible {
+    border-color: var(--color-brand);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-brand) 20%, transparent);
+  }
+  textarea.riso-input {
+    resize: vertical;
+  }
+}
+
+@keyframes float-y {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.float-slow {
+  animation: float-y 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+  .float-slow {
+    animation: none;
+  }
 }
