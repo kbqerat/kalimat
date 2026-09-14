@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
+import { WhatsappButton } from "@/components/site/whatsapp-button";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 
@@ -21,6 +22,7 @@ export default async function StorefrontLayout({
       <Header locale={locale} dict={dict} />
       <main className="flex-1">{children}</main>
       <Footer locale={locale} dict={dict} />
+      <WhatsappButton label={dict.whatsapp.cta} />
     </div>
   );
 }

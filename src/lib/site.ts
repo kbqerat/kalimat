@@ -11,6 +11,10 @@ export const CONTACT_EMAIL = "Medamri4848@gmail.com";
 export const CONTACT_CITY = "Oujda, Maroc";
 export const CONTACT_COORDS = { lat: 34.6814, lon: -1.9086 };
 
+/** WhatsApp contact number, international format (no spaces, no "+"), for wa.me links. */
+export const WHATSAPP_NUMBER = "212600029060";
+export const WHATSAPP_DISPLAY = "06 00 02 90 60";
+
 /** Shipping, in MAD. Flat fee, waived above the free-shipping threshold. */
 export const SHIPPING_FLAT_MAD = 25;
 export const FREE_SHIPPING_THRESHOLD_MAD = 180;

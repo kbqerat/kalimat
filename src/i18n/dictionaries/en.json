@@ -54,6 +54,40 @@
     "reviewsTitle": "+4.8/5 reviews",
     "reviewsSub": "Happy customers"
   },
+  "whatsapp": {
+    "cta": "Chat on WhatsApp"
+  },
+  "testimonials": {
+    "eyebrow": "Customer reviews",
+    "title": "What parents are saying",
+    "sub": "Families across Morocco trust us",
+    "items": [
+      {
+        "name": "Salma B.",
+        "city": "Casablanca",
+        "rating": 5,
+        "text": "My kids love the cards, we use them every night before bed. Fast delivery too!"
+      },
+      {
+        "name": "Youssef E.",
+        "city": "Rabat",
+        "rating": 5,
+        "text": "Great print quality, and cash on delivery made me comfortable placing my first order."
+      },
+      {
+        "name": "Imane T.",
+        "city": "Marrakech",
+        "rating": 4,
+        "text": "The trilingual box is perfect for my daughter, she's progressing fast in Arabic and English."
+      },
+      {
+        "name": "Karim L.",
+        "city": "Fès",
+        "rating": 5,
+        "text": "Very responsive customer service on WhatsApp, and the cards are sturdy and well laminated."
+      }
+    ]
+  },
   "product": {
     "addToCart": "Add to cart",
     "added": "Added",

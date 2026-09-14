@@ -2,7 +2,7 @@ export const locales = ["fr", "ar", "en"] as const;
 
 export type Locale = (typeof locales)[number];
 
-export const defaultLocale: Locale = "fr";
+export const defaultLocale: Locale = "ar";
 
 export const localeNames: Record<Locale, string> = {
   fr: "Français",
@@ -13,7 +13,7 @@ export const localeNames: Record<Locale, string> = {
 /** Short label used in the language switcher pills. */
 export const localeShort: Record<Locale, string> = {
   fr: "FR",
-  ar: "ع",
+  ar: "عربية",
   en: "EN",
 };
 

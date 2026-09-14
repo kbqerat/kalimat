@@ -6,6 +6,7 @@ import { Reveal } from "@/components/motion/reveal";
 import { TiltPhoto } from "@/components/motion/tilt-photo";
 import { CollectionCard } from "@/components/product/collection-card";
 import { ProductGrid } from "@/components/product/product-grid";
+import { Testimonials } from "@/components/site/testimonials";
 import heroMain from "@/images/hero-main.webp";
 import langFr from "@/images/img2.webp";
 import langEn from "@/images/img3.jpg";
@@ -271,6 +272,9 @@ export default async function HomePage({
           </Reveal>
         </section>
       </div>
+
+      {/* testimonials */}
+      <Testimonials dict={dict} />
 
       {/* how it works */}
       <section className="relative overflow-hidden bg-brand py-16 text-white sm:py-20">

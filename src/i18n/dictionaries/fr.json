@@ -54,6 +54,40 @@
     "reviewsTitle": "+4,8/5 avis",
     "reviewsSub": "Clients satisfaits"
   },
+  "whatsapp": {
+    "cta": "Discuter sur WhatsApp"
+  },
+  "testimonials": {
+    "eyebrow": "Avis clients",
+    "title": "Ce que disent les parents",
+    "sub": "Des familles à travers le Maroc nous font confiance",
+    "items": [
+      {
+        "name": "Salma B.",
+        "city": "Casablanca",
+        "rating": 5,
+        "text": "Mes enfants adorent les cartes, on les utilise tous les soirs avant le coucher. Livraison rapide en plus !"
+      },
+      {
+        "name": "Youssef E.",
+        "city": "Rabat",
+        "rating": 5,
+        "text": "Très bonne qualité d'impression et le paiement à la livraison m'a rassuré pour ma première commande."
+      },
+      {
+        "name": "Imane T.",
+        "city": "Marrakech",
+        "rating": 4,
+        "text": "Le coffret trilingue est parfait pour ma fille, elle progresse vite en arabe et en anglais."
+      },
+      {
+        "name": "Karim L.",
+        "city": "Fès",
+        "rating": 5,
+        "text": "Service client très réactif sur WhatsApp, et les cartes sont solides et bien plastifiées."
+      }
+    ]
+  },
   "product": {
     "addToCart": "Ajouter au panier",
     "added": "Ajouté",
