@@ -3,6 +3,8 @@ import { safeLocale } from "@/i18n/config";
 import { getSettings } from "@/lib/data";
 import { MOROCCAN_CITIES } from "@/lib/site";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminSettingsPage({
   params,
 }: {

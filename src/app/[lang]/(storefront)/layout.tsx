@@ -6,6 +6,12 @@ import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getSettings } from "@/lib/data";
 
+// Storefront pages are statically cached; `revalidatePath` from the admin
+// settings form should bust that cache on demand, but this time-based
+// revalidation is a safety net so edits (shop name, contact info, shipping
+// fee, product/stock changes) show up within a minute even if it doesn't.
+export const revalidate = 60;
+
 export default async function StorefrontLayout({
   children,
   params,
