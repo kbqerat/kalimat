@@ -91,6 +91,19 @@ create table if not exists settings (
 );
 insert into settings (id) values (1) on conflict (id) do nothing;
 
+-- Migration (2026-09-14): editable shop name / contact fields, admin
+-- "Réglages" page. Safe to re-run — for an existing project, run this
+-- block once in the Supabase SQL editor.
+alter table settings add column if not exists site_name text;
+alter table settings add column if not exists contact_email text;
+alter table settings add column if not exists whatsapp_number text;
+update settings set
+  site_name = coalesce(site_name, 'Kalimat'),
+  store_phone = coalesce(store_phone, '+212 6 00 00 00 00'),
+  contact_email = coalesce(contact_email, 'Medamri4848@gmail.com'),
+  whatsapp_number = coalesce(whatsapp_number, '212600029060')
+where id = 1;
+
 -- ---------- place-order transaction ----------
 -- Creates an order + items and decrements stock atomically.
 create or replace function place_order(

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { logout } from "@/app/[lang]/admin/login/actions";
 import { requireAdmin } from "@/lib/admin-auth";
-import { SITE_NAME } from "@/lib/site";
+import { getSettings } from "@/lib/data";
 
 export default async function AdminDashLayout({
   children,
@@ -12,6 +12,7 @@ export default async function AdminDashLayout({
 }) {
   const { lang } = await params;
   await requireAdmin(lang);
+  const settings = await getSettings();
 
   const nav = [
     { href: `/${lang}/admin`, label: "Commandes" },
@@ -24,7 +25,7 @@ export default async function AdminDashLayout({
     <div className="mx-auto max-w-6xl px-[var(--page-margin)] py-6">
       <header className="flex flex-wrap items-center gap-x-6 gap-y-3 border-b border-line pb-4">
         <Link href={`/${lang}/admin`} className="font-display text-lg text-brand">
-          {SITE_NAME}
+          {settings.siteName}
           <span className="ms-2 text-xs font-normal text-ink-soft">ADMIN</span>
         </Link>
         <nav className="flex gap-4 text-sm font-semibold text-ink-soft">

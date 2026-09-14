@@ -2,12 +2,8 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
-import {
-  CONTACT_CITY,
-  CONTACT_COORDS,
-  CONTACT_EMAIL,
-  CONTACT_PHONE,
-} from "@/lib/site";
+import { getSettings } from "@/lib/data";
+import { CONTACT_CITY, CONTACT_COORDS } from "@/lib/site";
 
 export async function generateMetadata({
   params,
@@ -28,13 +24,13 @@ export default async function ContactPage({
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
   const locale = lang as Locale;
-  const dict = await getDictionary(locale);
+  const [dict, settings] = await Promise.all([getDictionary(locale), getSettings()]);
 
   const { lat, lon } = CONTACT_COORDS;
   const bbox = [lon - 0.045, lat - 0.03, lon + 0.045, lat + 0.03].join(",");
   const mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lon}`;
   const mapLink = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
-  const telHref = `tel:${CONTACT_PHONE.replace(/[^+\d]/g, "")}`;
+  const telHref = `tel:${settings.contactPhone.replace(/[^+\d]/g, "")}`;
 
   const infoCards = [
     {
@@ -47,15 +43,15 @@ export default async function ContactPage({
       icon: "📞",
       tint: "bg-riso-teal/10",
       label: dict.contact.phoneTitle,
-      value: CONTACT_PHONE,
+      value: settings.contactPhone,
       href: telHref,
     },
     {
       icon: "✉️",
       tint: "bg-riso-orange/10",
       label: dict.contact.emailTitle,
-      value: CONTACT_EMAIL,
-      href: `mailto:${CONTACT_EMAIL}`,
+      value: settings.contactEmail,
+      href: `mailto:${settings.contactEmail}`,
     },
   ];
 
@@ -76,7 +72,7 @@ export default async function ContactPage({
           <a href={telHref} className="btn btn-primary">
             📞 {dict.contact.callCta}
           </a>
-          <a href={`mailto:${CONTACT_EMAIL}`} className="btn btn-ghost">
+          <a href={`mailto:${settings.contactEmail}`} className="btn btn-ghost">
             ✉️ {dict.contact.emailCta}
           </a>
         </div>

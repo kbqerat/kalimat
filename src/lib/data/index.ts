@@ -1,13 +1,21 @@
 import "server-only";
 
 import { makeOrderRef } from "@/lib/order-ref";
-import { shippingFor } from "@/lib/site";
+import {
+  CONTACT_EMAIL,
+  CONTACT_PHONE,
+  FREE_SHIPPING_THRESHOLD_MAD,
+  SHIPPING_FLAT_MAD,
+  SITE_NAME,
+  WHATSAPP_NUMBER,
+  shippingFor,
+} from "@/lib/site";
 import { supabaseAdmin } from "@/lib/supabase";
 import { seedCollections } from "./collections-seed";
 import { seedProducts } from "./seed";
-import type { Collection, Order, OrderItem, OrderStatus, Product } from "./types";
+import type { Collection, Order, OrderItem, OrderStatus, Product, Settings } from "./types";
 
-export type { Collection, Order, OrderItem, OrderStatus, Product } from "./types";
+export type { Collection, Order, OrderItem, OrderStatus, Product, Settings } from "./types";
 
 /**
  * Data layer. Reads from the local seed unless `NEXT_PUBLIC_SUPABASE_URL` is
@@ -20,6 +28,16 @@ const USING_SUPABASE = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL);
 // In-memory order store for the mock backend. Not durable across server
 // restarts / serverless invocations — good enough to demo the flow.
 const mockOrders = new Map<string, Order>();
+
+// In-memory settings for the mock backend, seeded from the site.ts defaults.
+const mockSettings: Settings = {
+  siteName: SITE_NAME,
+  shippingFlatMad: SHIPPING_FLAT_MAD,
+  freeShippingThresholdMad: FREE_SHIPPING_THRESHOLD_MAD,
+  contactPhone: CONTACT_PHONE,
+  contactEmail: CONTACT_EMAIL,
+  whatsappNumber: WHATSAPP_NUMBER,
+};
 
 function clone<T>(v: T): T {
   return typeof structuredClone === "function"
@@ -89,6 +107,18 @@ function rowToOrder(row: any): Order {
     shippingMad: row.shipping_mad,
     totalMad: row.total_mad,
     createdAt: row.created_at,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function rowToSettings(row: any): Settings {
+  return {
+    siteName: row.site_name ?? SITE_NAME,
+    shippingFlatMad: row.shipping_flat_mad,
+    freeShippingThresholdMad: row.free_shipping_threshold,
+    contactPhone: row.store_phone ?? CONTACT_PHONE,
+    contactEmail: row.contact_email ?? CONTACT_EMAIL,
+    whatsappNumber: row.whatsapp_number ?? WHATSAPP_NUMBER,
   };
 }
 
@@ -292,7 +322,11 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   }
 
   const subtotalMad = lineItems.reduce((s, i) => s + i.unitPriceMad * i.qty, 0);
-  const shippingMad = shippingFor(subtotalMad);
+  const shippingMad = shippingFor(
+    subtotalMad,
+    mockSettings.shippingFlatMad,
+    mockSettings.freeShippingThresholdMad,
+  );
   const ref = makeOrderRef();
   const order: Order = {
     id: `ord_${Date.now().toString(36)}`,
@@ -474,4 +508,39 @@ export async function removeProductImage(
   if (!product) return null;
   product.images = product.images.filter((u) => u !== url);
   return clone(product);
+}
+
+/* -------------------------------- settings ------------------------------- */
+
+export async function getSettings(): Promise<Settings> {
+  if (USING_SUPABASE) {
+    const { data, error } = await supabaseAdmin
+      .from("settings")
+      .select("*")
+      .eq("id", 1)
+      .maybeSingle();
+    if (error) throw error;
+    return data ? rowToSettings(data) : { ...mockSettings };
+  }
+  return { ...mockSettings };
+}
+
+export async function updateSettings(settings: Settings): Promise<Settings> {
+  if (USING_SUPABASE) {
+    const { error } = await supabaseAdmin
+      .from("settings")
+      .update({
+        site_name: settings.siteName,
+        shipping_flat_mad: settings.shippingFlatMad,
+        free_shipping_threshold: settings.freeShippingThresholdMad,
+        store_phone: settings.contactPhone,
+        contact_email: settings.contactEmail,
+        whatsapp_number: settings.whatsappNumber,
+      })
+      .eq("id", 1);
+    if (error) throw error;
+    return settings;
+  }
+  Object.assign(mockSettings, settings);
+  return { ...mockSettings };
 }

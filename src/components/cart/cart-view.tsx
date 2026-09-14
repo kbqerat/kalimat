@@ -8,9 +8,19 @@ import type { Dictionary } from "@/i18n/get-dictionary";
 import { t } from "@/i18n/t";
 import { localeHref } from "@/i18n/routing";
 import { formatMad } from "@/lib/format";
-import { FREE_SHIPPING_THRESHOLD_MAD, shippingFor } from "@/lib/site";
+import { shippingFor } from "@/lib/site";
 
-export function CartView({ locale, dict }: { locale: Locale; dict: Dictionary }) {
+export function CartView({
+  locale,
+  dict,
+  shippingFlatMad,
+  freeShippingThresholdMad,
+}: {
+  locale: Locale;
+  dict: Dictionary;
+  shippingFlatMad: number;
+  freeShippingThresholdMad: number;
+}) {
   const { items, subtotalMad, count, setQty, remove, ready } = useCart();
 
   if (!ready) {
@@ -33,7 +43,7 @@ export function CartView({ locale, dict }: { locale: Locale; dict: Dictionary })
     );
   }
 
-  const shipping = shippingFor(subtotalMad);
+  const shipping = shippingFor(subtotalMad, shippingFlatMad, freeShippingThresholdMad);
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1.6fr_1fr]">
@@ -163,7 +173,7 @@ export function CartView({ locale, dict }: { locale: Locale; dict: Dictionary })
           {dict.cart.checkout}
         </Link>
         <p className="mt-2 text-center text-xs text-ink-soft">
-          {dict.cart.codBadge} · {FREE_SHIPPING_THRESHOLD_MAD}+ {dict.common.currency}{" "}
+          {dict.cart.codBadge} · {freeShippingThresholdMad}+ {dict.common.currency}{" "}
           {dict.cart.shippingFree}
         </p>
 

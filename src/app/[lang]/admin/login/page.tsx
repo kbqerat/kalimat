@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { AdminLoginForm } from "@/components/admin/login-form";
 import { isAdmin } from "@/lib/admin-auth";
 import { safeLocale } from "@/i18n/config";
-import { SITE_NAME } from "@/lib/site";
+import { getSettings } from "@/lib/data";
 
 export const metadata: Metadata = { title: "Admin", robots: { index: false } };
 
@@ -14,13 +14,14 @@ export default async function AdminLoginPage({
 }) {
   const { lang } = await params;
   if (await isAdmin()) redirect(`/${safeLocale(lang)}/admin`);
+  const settings = await getSettings();
 
   return (
     <div className="grid min-h-screen place-items-center bg-paper px-[var(--page-margin)]">
       <div className="w-full max-w-sm">
         <div className="crop-frame border-2 border-ink bg-paper p-8">
           <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-ink-soft">
-            {SITE_NAME} · Atelier
+            {settings.siteName} · Atelier
           </p>
           <h1 className="mt-2 font-display text-3xl uppercase tracking-tight">
             Administration

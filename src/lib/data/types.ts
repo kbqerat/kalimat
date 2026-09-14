@@ -59,6 +59,16 @@ export interface Product {
   isActive: boolean;
 }
 
+/** Store-wide settings, editable from the admin. Singleton row in Supabase. */
+export interface Settings {
+  siteName: string;
+  shippingFlatMad: number;
+  freeShippingThresholdMad: number;
+  contactPhone: string;
+  contactEmail: string;
+  whatsappNumber: string;
+}
+
 export type OrderStatus = "pending" | "confirmed" | "cancelled";
 
 export interface OrderItem {

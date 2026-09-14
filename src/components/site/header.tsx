@@ -6,12 +6,11 @@ import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import { t } from "@/i18n/t";
 import { localeHref } from "@/i18n/routing";
-import { getCollections } from "@/lib/data";
+import { getCollections, getSettings } from "@/lib/data";
 import { formatMad } from "@/lib/format";
-import { FREE_SHIPPING_THRESHOLD_MAD, SITE_NAME } from "@/lib/site";
 
 export async function Header({ locale, dict }: { locale: Locale; dict: Dictionary }) {
-  const collections = await getCollections();
+  const [collections, settings] = await Promise.all([getCollections(), getSettings()]);
   const primaryNav = [
     { href: localeHref(locale, "/products"), label: dict.nav.products },
     { href: localeHref(locale, "/order"), label: dict.nav.trackOrder },
@@ -30,7 +29,7 @@ export async function Header({ locale, dict }: { locale: Locale; dict: Dictionar
   return (
     <header className="sticky top-0 z-50">
       <div className="bg-brand py-2 text-center text-xs font-semibold text-white">
-        🚚 {t(dict.freeShipBar, { amount: formatMad(FREE_SHIPPING_THRESHOLD_MAD, locale) })}
+        🚚 {t(dict.freeShipBar, { amount: formatMad(settings.freeShippingThresholdMad, locale) })}
       </div>
 
       <div className="relative border-b border-line bg-paper/95 backdrop-blur">
@@ -53,7 +52,7 @@ export async function Header({ locale, dict }: { locale: Locale; dict: Dictionar
             href={localeHref(locale, "/")}
             className="font-display text-xl tracking-tight text-brand"
           >
-            {SITE_NAME}
+            {settings.siteName}
           </Link>
 
           <nav className="ms-4 hidden items-center gap-5 text-sm font-semibold text-ink-soft md:flex">

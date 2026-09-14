@@ -6,7 +6,7 @@ import "../globals.css";
 import { CartProvider } from "@/components/cart/cart-context";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { dir, isLocale, locales, type Locale } from "@/i18n/config";
-import { SITE_NAME } from "@/lib/site";
+import { getSettings } from "@/lib/data";
 
 const readex = Readex_Pro({
   subsets: ["arabic", "latin"],
@@ -25,9 +25,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { lang } = await params;
   if (!isLocale(lang)) return {};
-  const dict = await getDictionary(lang);
+  const [dict, settings] = await Promise.all([getDictionary(lang), getSettings()]);
+  const siteName = settings.siteName;
   return {
-    title: { default: `${SITE_NAME} — ${dict.meta.tagline}`, template: `%s · ${SITE_NAME}` },
+    title: { default: `${siteName} — ${dict.meta.tagline}`, template: `%s · ${siteName}` },
     description: dict.meta.description,
   };
 }

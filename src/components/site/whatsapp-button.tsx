@@ -1,9 +1,13 @@
-import { WHATSAPP_NUMBER } from "@/lib/site";
-
-export function WhatsappButton({ label }: { label: string }) {
+export function WhatsappButton({
+  label,
+  whatsappNumber,
+}: {
+  label: string;
+  whatsappNumber: string;
+}) {
   return (
     <a
-      href={`https://wa.me/${WHATSAPP_NUMBER}`}
+      href={`https://wa.me/${whatsappNumber}`}
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}

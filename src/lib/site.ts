@@ -1,21 +1,23 @@
 /**
- * Store-wide configuration. `SITE_NAME` is a placeholder — swap it here.
+ * Store-wide configuration. The values below are the seed defaults for the
+ * editable `settings` table (see `src/db/schema.sql` and `getSettings()` in
+ * `src/lib/data/index.ts`) — the site name, shipping fees and contact phone
+ * / email / WhatsApp number are edited from /admin/settings and read from
+ * Supabase from there on. Everything else here (domain, map location, city
+ * list) isn't part of that table and stays a plain constant.
  */
 export const SITE_NAME = "Kalimat";
 
 export const SITE_DOMAIN = "kalimat.ma";
 
-/** Store contact details. Phone is still a placeholder — swap it here. */
-export const CONTACT_PHONE = "+212 6 00 00 00 00";
-export const CONTACT_EMAIL = "Medamri4848@gmail.com";
+/** Map location shown on the contact page. Not editable from the admin. */
 export const CONTACT_CITY = "Oujda, Maroc";
 export const CONTACT_COORDS = { lat: 34.6814, lon: -1.9086 };
 
-/** WhatsApp contact number, international format (no spaces, no "+"), for wa.me links. */
+/** Seed defaults for `settings` — editable from /admin/settings once Supabase is connected. */
+export const CONTACT_PHONE = "+212 6 00 00 00 00";
+export const CONTACT_EMAIL = "Medamri4848@gmail.com";
 export const WHATSAPP_NUMBER = "212600029060";
-export const WHATSAPP_DISPLAY = "06 00 02 90 60";
-
-/** Shipping, in MAD. Flat fee, waived above the free-shipping threshold. */
 export const SHIPPING_FLAT_MAD = 25;
 export const FREE_SHIPPING_THRESHOLD_MAD = 180;
 
@@ -44,7 +46,11 @@ export const MOROCCAN_CITIES = [
   "Laâyoune",
 ] as const;
 
-export function shippingFor(subtotalMad: number): number {
+export function shippingFor(
+  subtotalMad: number,
+  flatMad: number = SHIPPING_FLAT_MAD,
+  freeThresholdMad: number = FREE_SHIPPING_THRESHOLD_MAD,
+): number {
   if (subtotalMad <= 0) return 0;
-  return subtotalMad >= FREE_SHIPPING_THRESHOLD_MAD ? 0 : SHIPPING_FLAT_MAD;
+  return subtotalMad >= freeThresholdMad ? 0 : flatMad;
 }

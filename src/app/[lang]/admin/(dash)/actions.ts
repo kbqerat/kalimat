@@ -14,6 +14,7 @@ import {
   getProductById,
   removeProductImage,
   setOrderStatus,
+  updateSettings,
   upsertCollection,
   upsertProduct,
 } from "@/lib/data";
@@ -330,4 +331,43 @@ export async function removeCollection(formData: FormData): Promise<void> {
   if (slug) await deleteCollection(slug);
   revalidatePath(`/${lang}/admin/collections`);
   revalidatePath(`/${lang}`, "layout");
+}
+
+/* ------------------------------- settings -------------------------------- */
+
+const settingsSchema = z.object({
+  siteName: z.string().trim().min(1, "Le nom de la boutique est obligatoire."),
+  shippingFlatMad: z.coerce.number().int().min(0).max(10000),
+  freeShippingThresholdMad: z.coerce.number().int().min(0).max(1000000),
+  contactPhone: z.string().trim().min(1, "Le téléphone est obligatoire."),
+  contactEmail: z.string().trim().email("Email invalide."),
+  whatsappNumber: z
+    .string()
+    .trim()
+    .regex(/^\d{9,15}$/, "Numéro WhatsApp invalide — chiffres uniquement, avec l'indicatif pays (ex. 212600029060)."),
+});
+
+export interface SettingsFormState {
+  ok?: boolean;
+  error?: string;
+}
+
+export async function saveSettings(
+  _prev: SettingsFormState,
+  formData: FormData,
+): Promise<SettingsFormState> {
+  if (!(await isAdmin())) return { error: "Non autorisé." };
+
+  const raw = Object.fromEntries(formData.entries());
+  const lang = safeLocale(raw.lang);
+
+  const parsed = settingsSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Formulaire invalide." };
+  }
+
+  await updateSettings(parsed.data);
+  revalidatePath(`/${lang}`, "layout");
+  revalidatePath(`/${lang}/admin`, "layout");
+  return { ok: true };
 }

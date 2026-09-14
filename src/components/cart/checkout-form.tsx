@@ -14,13 +14,23 @@ import { cn } from "@/lib/utils";
 
 type FieldKey = "name" | "phone" | "city" | "address" | "cart" | "generic";
 
-export function CheckoutForm({ locale, dict }: { locale: Locale; dict: Dictionary }) {
+export function CheckoutForm({
+  locale,
+  dict,
+  shippingFlatMad,
+  freeShippingThresholdMad,
+}: {
+  locale: Locale;
+  dict: Dictionary;
+  shippingFlatMad: number;
+  freeShippingThresholdMad: number;
+}) {
   const router = useRouter();
   const { items, subtotalMad, clear, ready } = useCart();
   const [pending, startTransition] = useTransition();
   const [errors, setErrors] = useState<Partial<Record<FieldKey, string>>>({});
 
-  const shipping = shippingFor(subtotalMad);
+  const shipping = shippingFor(subtotalMad, shippingFlatMad, freeShippingThresholdMad);
   const total = subtotalMad + shipping;
 
   const errText: Record<Exclude<FieldKey, "generic">, string> = {
