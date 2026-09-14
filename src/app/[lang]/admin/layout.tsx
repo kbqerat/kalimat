@@ -10,5 +10,12 @@ export default function AdminRootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="min-h-screen bg-paper">{children}</div>;
+  // The admin UI is French-only, regardless of the `[lang]` URL segment used
+  // to get here (e.g. an admin link opened from the Arabic storefront) — so
+  // it must stay left-to-right even when the root <html> is dir="rtl".
+  return (
+    <div dir="ltr" lang="fr" className="min-h-screen bg-paper">
+      {children}
+    </div>
+  );
 }
