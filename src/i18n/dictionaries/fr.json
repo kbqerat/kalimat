@@ -206,7 +206,8 @@
     "contact": "Nous écrire",
     "trackOrder": "Suivre ma commande",
     "rights": "Tous droits réservés.",
-    "madeWith": "Conçu au Maroc"
+    "madeWith": "Conçu au Maroc",
+    "devContact": "Contacter le développeur"
   },
   "track": {
     "title": "Suivre ma commande",

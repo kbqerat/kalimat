@@ -66,7 +66,15 @@ export async function Footer({ locale, dict }: { locale: Locale; dict: Dictionar
           <span>
             © {year} {settings.siteName}. {dict.footer.rights}
           </span>
-          <span>{dict.footer.madeWith}</span>
+          <span className="flex items-center gap-3">
+            <span>{dict.footer.madeWith}</span>
+            <a
+              href="mailto:bekkaoui.tarek2001@gmail.com"
+              className="hover:text-brand hover:underline"
+            >
+              {dict.footer.devContact}
+            </a>
+          </span>
         </div>
       </div>
     </footer>

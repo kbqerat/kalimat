@@ -206,7 +206,8 @@
     "contact": "Contact us",
     "trackOrder": "Track my order",
     "rights": "All rights reserved.",
-    "madeWith": "Designed in Morocco"
+    "madeWith": "Designed in Morocco",
+    "devContact": "Contact the developer"
   },
   "track": {
     "title": "Track my order",
