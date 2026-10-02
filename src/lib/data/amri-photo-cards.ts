@@ -1,7 +1,7 @@
 import type { PackCard } from "./types";
 
 /**
- * Seed for the "Amri — 80 cartes photo" audio pack: the words exactly as
+ * Seed for the "Amri — 96 cartes photo" audio pack: the words exactly as
  * printed on the cards (photo cards, one theme per run of numbers). Same
  * role as amri-cards.ts — loaded by `npm run db:add-amri`, then edited in
  * /admin.
@@ -107,6 +107,24 @@ const RAW: [string, string, string, string, string, "هذا" | "هذه"][] = [
   ["قبعة", "Chapeau", "Hat", "un chapeau", "a hat", "هذه"],
   // 80
   ["حفارة", "Pelleteuse", "Excavator", "une pelleteuse", "an excavator", "هذه"],
+  // Engins 81–85 (84 is printed "Gr", cut short: Niveleuse)
+  ["رافعة", "Grue", "Crane", "une grue", "a crane", "هذه"],
+  ["جرار", "Tracteur", "Tractor", "un tracteur", "a tractor", "هذا"],
+  ["شاحنة خلط الخرسانة", "Bétonnière", "Concrete mixer truck", "une bétonnière", "a concrete mixer truck", "هذه"],
+  ["آلة التسوية", "Niveleuse", "Grader", "une niveleuse", "a grader", "هذه"],
+  ["شاحنة قلابة", "Camion-benne", "Dump truck", "un camion-benne", "a dump truck", "هذه"],
+  // Nature 86–96
+  ["شجرة", "Arbre", "Tree", "un arbre", "a tree", "هذه"],
+  ["زهرة", "Fleur", "Flower", "une fleur", "a flower", "هذه"],
+  ["شمس", "Soleil", "Sun", "un soleil", "a sun", "هذه"],
+  ["قمر", "Lune", "Moon", "une lune", "a moon", "هذا"],
+  ["نجمة", "Étoile", "Star", "une étoile", "a star", "هذه"],
+  ["سحابة", "Nuage", "Cloud", "un nuage", "a cloud", "هذه"],
+  ["مطر", "Pluie", "Rain", "de la pluie", "rain", "هذا"],
+  ["ثلج", "Neige", "Snow", "de la neige", "snow", "هذا"],
+  ["جبل", "Montagne", "Mountain", "une montagne", "a mountain", "هذا"],
+  ["بحر", "Mer", "Sea", "une mer", "a sea", "هذا"],
+  ["نهر", "Rivière", "River", "une rivière", "a river", "هذا"],
 ];
 
 export const amriPhotoCards: PackCard[] = RAW.map(([ar, fr, en, frIs, enIs, arThis], i) => ({

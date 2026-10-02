@@ -86,7 +86,7 @@ def main(work):
     for n, dx, angle in [(12, -350, 16), (41, 350, -16), (56, -190, 8), (71, 190, -8)]:
         place(c, front(n), 380, (SIZE / 2 + dx, 620 + abs(dx) * 0.12), angle)
     place(c, front(21), 470, (SIZE / 2, 600))
-    pill(c, "80", (SIZE / 2, 125), RED, 74)
+    pill(c, "96", (SIZE / 2, 125), RED, 74)
     pill(c, "AR  |  FR  |  EN", (SIZE / 2, 1105), BLUE, 46)
     save(c, "cover")
 
@@ -99,7 +99,7 @@ def main(work):
 
     # A grid across the themes.
     c = background()
-    grid = [12, 18, 24, 29, 39, 45, 55, 62, 73]
+    grid = [12, 18, 24, 39, 55, 73, 82, 88, 95]
     for i, n in enumerate(grid):
         place(c, front(n), 270, (240 + (i % 3) * 360, 215 + (i // 3) * 385))
     save(c, "themes")

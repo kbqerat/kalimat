@@ -1,6 +1,6 @@
 /**
  * Puts the Amri audio packs — the 100-card pack (amri-cards.ts) and the
- * 80 photo cards (amri-photo-cards.ts), products in src/lib/data/seed.ts — in
+ * 96 photo cards (amri-photo-cards.ts), products in src/lib/data/seed.ts — in
  * Supabase without touching the rest of the catalogue — unlike
  * `npm run db:seed`, which would also push the demo products.
  *
