@@ -13,7 +13,7 @@ import { supabaseAdmin } from "@/lib/supabase";
  * which only works for local dev.
  */
 
-export type UploadFolder = "products" | "collections";
+export type UploadFolder = "products" | "collections" | "cards";
 
 const USING_SUPABASE = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL);
 const STORAGE_BUCKET = "uploads";
@@ -131,3 +131,4 @@ export async function deleteUploadedImage(url: string): Promise<void> {
 
 export const saveProductImage = (file: File) => saveUploadedImage(file, "products");
 export const saveCollectionImage = (file: File) => saveUploadedImage(file, "collections");
+export const saveCardImage = (file: File) => saveUploadedImage(file, "cards");

@@ -10,8 +10,13 @@ import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { t } from "@/i18n/t";
 import { localeHref } from "@/i18n/routing";
-import { getCollectionBySlug, getCollections, getProductBySlug, getProducts } from "@/lib/data";
-import { AMRI_PRODUCT_SLUG, amriArt } from "@/lib/data/amri-cards";
+import {
+  getCollectionBySlug,
+  getCollections,
+  getPackCards,
+  getProductBySlug,
+  getProducts,
+} from "@/lib/data";
 import { formatMad } from "@/lib/format";
 
 export async function generateStaticParams() {
@@ -47,12 +52,14 @@ export default async function ProductPage({
   const low = !soldOut && product.stock <= 6;
   const save = product.compareAtMad ? product.compareAtMad - product.priceMad : 0;
 
-  const [sameCollection, allProducts, collections, collection] = await Promise.all([
+  const [sameCollection, allProducts, collections, collection, packCards] = await Promise.all([
     getProducts({ collection: product.collectionSlug ?? undefined }),
     getProducts(),
     getCollections(),
     product.collectionSlug ? getCollectionBySlug(product.collectionSlug) : null,
+    product.audioEnabled ? getPackCards(product.id) : [],
   ]);
+  const cardPreviews = packCards.filter((c) => c.image).slice(0, 8);
   // Same-collection picks first (most relevant), then fill with the rest of
   // the catalogue so the "you may also like" rail always has enough to scroll.
   const sameCollectionOthers = sameCollection.filter((p) => p.id !== product.id);
@@ -178,28 +185,30 @@ export default async function ProductPage({
         </div>
       </div>
 
-      {product.slug === AMRI_PRODUCT_SLUG && (
+      {product.audioEnabled && (
         <section className="mt-10 card p-6 sm:p-8">
           <div className="flex items-center gap-3">
             <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-riso-orange/10 text-lg">
               🔊
             </span>
-            <h2 className="font-display text-xl">{dict.amri.includedTitle}</h2>
+            <h2 className="font-display text-xl">{dict.listen.includedTitle}</h2>
           </div>
           <p className="mt-4 max-w-prose text-[15px] leading-[1.9] text-ink-soft">
-            {dict.amri.includedBody}
+            {dict.listen.includedBody}
           </p>
-          <div className="mt-5 grid grid-cols-4 gap-2 sm:grid-cols-8">
-            {[1, 27, 45, 51, 61, 80, 90, 95].map((n) => (
-              <img
-                key={n}
-                src={amriArt(n)}
-                alt=""
-                loading="lazy"
-                className="aspect-square w-full rounded-xl border border-line object-cover"
-              />
-            ))}
-          </div>
+          {cardPreviews.length > 0 && (
+            <div className="mt-5 grid grid-cols-4 gap-2 sm:grid-cols-8">
+              {cardPreviews.map((c) => (
+                <img
+                  key={c.n}
+                  src={c.image}
+                  alt=""
+                  loading="lazy"
+                  className="aspect-square w-full rounded-xl border border-line object-cover"
+                />
+              ))}
+            </div>
+          )}
         </section>
       )}
 

@@ -177,3 +177,21 @@ create policy "public reads active products" on products
 
 -- Everything else (writes, order reads, settings) goes through the
 -- service-role key from server code, which bypasses RLS. No anon policies.
+
+-- Migration (2026-10-02): audio packs. A product with `audio_enabled` gets
+-- public listen pages at /ecoute/<slug>/<n>, one per card; each printed
+-- card carries a QR code to its page. Safe to re-run — for an existing
+-- project, run this block once in the Supabase SQL editor.
+alter table products add column if not exists audio_enabled boolean not null default false;
+
+create table if not exists pack_cards (
+  product_id  text not null references products (id) on delete cascade,
+  n           integer not null check (n > 0),   -- number printed on the card
+  word        jsonb not null,                    -- { ar, fr, en }
+  sentence    jsonb,                             -- { ar, fr, en }, optional
+  image       text,                              -- /uploads/cards/xxx.webp
+  primary key (product_id, n)
+);
+
+alter table pack_cards enable row level security;
+-- No anon policies: read and written from server code with the service role.

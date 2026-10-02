@@ -6,8 +6,8 @@ import type { Product } from "./types";
  */
 export const seedProducts: Product[] = [
   {
-    // Card contents + the free online version live in amri-cards.ts. The
-    // slug must match AMRI_PRODUCT_SLUG there. Price is a placeholder.
+    // Its 100 cards (the listen pages) are seeded from amri-cards.ts. The
+    // slug must match AMRI_PRODUCT_SLUG there — it's printed in the QR codes.
     id: "prd_amri_100",
     slug: "amri-100-cartes-premium",
     title: {
@@ -63,6 +63,7 @@ export const seedProducts: Product[] = [
     cardCount: 100,
     featured: true,
     isActive: true,
+    audioEnabled: true,
   },
   {
     id: "prd_flags_capitals",
@@ -111,6 +112,7 @@ export const seedProducts: Product[] = [
     cardCount: 72,
     featured: true,
     isActive: true,
+    audioEnabled: false,
   },
   {
     id: "prd_pack_3_langues",
@@ -155,6 +157,7 @@ export const seedProducts: Product[] = [
     cardCount: 380,
     featured: true,
     isActive: true,
+    audioEnabled: false,
   },
   {
     id: "prd_cartes_animaux_fr",
@@ -190,6 +193,7 @@ export const seedProducts: Product[] = [
     cardCount: 60,
     featured: false,
     isActive: true,
+    audioEnabled: false,
   },
   {
     id: "prd_cartes_arabe_lecture",
@@ -228,6 +232,7 @@ export const seedProducts: Product[] = [
     cardCount: 80,
     featured: true,
     isActive: true,
+    audioEnabled: false,
   },
   {
     id: "prd_english_first_words",
@@ -267,6 +272,7 @@ export const seedProducts: Product[] = [
     cardCount: 200,
     featured: false,
     isActive: true,
+    audioEnabled: false,
   },
   {
     id: "prd_coffret_langage",
@@ -306,6 +312,7 @@ export const seedProducts: Product[] = [
     ],
     featured: true,
     isActive: true,
+    audioEnabled: false,
   },
   {
     id: "prd_affiche_alphabet",
@@ -339,6 +346,7 @@ export const seedProducts: Product[] = [
     ],
     featured: false,
     isActive: true,
+    audioEnabled: false,
   },
   {
     id: "prd_syllabes_fr",
@@ -373,6 +381,7 @@ export const seedProducts: Product[] = [
     ],
     featured: false,
     isActive: true,
+    audioEnabled: false,
   },
   {
     id: "prd_chiffres_1_20",
@@ -412,6 +421,7 @@ export const seedProducts: Product[] = [
     cardCount: 40,
     featured: false,
     isActive: true,
+    audioEnabled: false,
   },
   {
     id: "prd_tri_fruits_legumes",
@@ -450,5 +460,6 @@ export const seedProducts: Product[] = [
     ],
     featured: false,
     isActive: true,
+    audioEnabled: false,
   },
 ];

@@ -2,6 +2,12 @@ import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV === "development";
 
+// Admin uploads (product photos, card images) are served from the Supabase
+// Storage bucket, on the project's own domain.
+const supabaseOrigin = process.env.NEXT_PUBLIC_SUPABASE_URL
+  ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).origin
+  : "";
+
 // No nonce/strict-dynamic here on purpose: that path forces every page into
 // dynamic rendering (see the Next.js CSP guide) and still wouldn't cover the
 // `motion` library, which sets animated transforms via the `style` attribute
@@ -12,7 +18,7 @@ const cspHeader = `
   default-src 'self';
   script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""};
   style-src 'self' 'unsafe-inline';
-  img-src 'self' data: blob:;
+  img-src 'self' data: blob: ${supabaseOrigin};
   font-src 'self' data:;
   connect-src 'self'${isDev ? " ws:" : ""};
   frame-src https://www.openstreetmap.org;

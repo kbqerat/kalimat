@@ -67,6 +67,14 @@ export default async function AdminProductsPage({
                   </Link>
                   <br />
                   <span className="text-xs text-ink-soft">{p.slug}</span>
+                  {p.audioEnabled && (
+                    <Link
+                      href={`/${lang}/admin/products/${p.id}/cards`}
+                      className="tag ms-2 !py-0 !text-[10px]"
+                    >
+                      🔊 audio
+                    </Link>
+                  )}
                 </td>
                 <td className="p-2">{p.type}</td>
                 <td className="p-2 text-xs text-ink-soft">

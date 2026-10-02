@@ -7,6 +7,7 @@
  */
 import { createClient } from "@supabase/supabase-js";
 import { seedCollections } from "../src/lib/data/collections-seed.ts";
+import { seedPackCards } from "../src/lib/data/amri-cards.ts";
 import { seedProducts } from "../src/lib/data/seed.ts";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -58,11 +59,26 @@ async function main() {
       images: p.images,
       featured: p.featured,
       is_active: p.isActive,
+      audio_enabled: p.audioEnabled,
     })),
     { onConflict: "id" },
   );
   if (prodError) throw prodError;
   console.log("Products done.");
+
+  console.log(`Seeding ${seedPackCards.length} pack cards...`);
+  const { error: cardError } = await supabase.from("pack_cards").upsert(
+    seedPackCards.map((c) => ({
+      product_id: c.productId,
+      n: c.n,
+      word: c.word,
+      sentence: c.sentence ?? null,
+      image: c.image ?? null,
+    })),
+    { onConflict: "product_id,n" },
+  );
+  if (cardError) throw cardError;
+  console.log("Pack cards done.");
 
   console.log("✓ Seed complete.");
 }

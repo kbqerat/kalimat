@@ -1,7 +1,8 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductForm } from "@/components/admin/product-form";
 import { ProductImages } from "@/components/admin/product-images";
-import { getCollections, getProductById } from "@/lib/data";
+import { getCollections, getPackCards, getProductById } from "@/lib/data";
 import type { Product } from "@/lib/data/types";
 
 export const dynamic = "force-dynamic";
@@ -24,6 +25,7 @@ function blankProduct(): Product {
     highlights: [],
     featured: false,
     isActive: false,
+    audioEnabled: false,
   };
 }
 
@@ -48,6 +50,7 @@ export default async function AdminProductEditPage({
 
   const product = await getProductById(id);
   if (!product) notFound();
+  const cardCount = product.audioEnabled ? (await getPackCards(product.id)).length : 0;
 
   return (
     <div className="space-y-10">
@@ -57,6 +60,19 @@ export default async function AdminProductEditPage({
         collections={collections}
         isNew={false}
       />
+      {product.audioEnabled && (
+        <section className="max-w-3xl rounded-xl border border-line p-4">
+          <h2 className="font-display text-lg">Cartes audio</h2>
+          <p className="mt-1 text-sm text-ink-soft">
+            {cardCount > 0
+              ? `${cardCount} carte${cardCount > 1 ? "s" : ""} — mots, images et QR codes à imprimer.`
+              : "Aucune carte pour l’instant : ajoute les mots, les images, puis télécharge les QR codes."}
+          </p>
+          <Link href={`/${lang}/admin/products/${product.id}/cards`} className="btn btn-brand mt-3">
+            Gérer les cartes →
+          </Link>
+        </section>
+      )}
       <ProductImages lang={lang} productId={product.id} images={product.images} />
     </div>
   );

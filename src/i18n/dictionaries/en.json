@@ -225,9 +225,8 @@
     "prev": "Previous",
     "next": "Next"
   },
-  "amri": {
-    "eyebrow": "Amri pack · Digital version",
-    "title": "Listen to the 100 Amri cards",
+  "listen": {
+    "eyebrow": "Audio version · {count} cards",
     "subtitle": "Every card in the pack, spoken in Arabic, French and English.",
     "hint": "Tap a card, then 🔊 to hear the word.",
     "cardOf": "Card {n} / {total}",
@@ -240,9 +239,10 @@
     "noSpeech": "This browser can't play speech. Try Chrome or Safari.",
     "noVoice": "This device has no voice installed for: {langs}.",
     "promoTitle": "Don't have the pack yet?",
-    "promoBody": "All 100 printed, double-sided cards, with a QR code on every card.",
+    "promoBody": "The printed, double-sided cards, with a QR code on every card.",
     "promoCta": "See the pack",
     "includedTitle": "Digital version included",
-    "includedBody": "Every card has a “Listen” QR code: scan it with a phone to hear the word in Arabic, French and English. No app to install."
+    "includedBody": "Every card has a “Listen” QR code: scan it with a phone to hear the word in Arabic, French and English. No app to install.",
+    "empty": "This pack's cards are coming soon."
   }
 }

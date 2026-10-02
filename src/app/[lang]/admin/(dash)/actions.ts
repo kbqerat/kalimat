@@ -3,19 +3,23 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { isAdmin } from "@/lib/admin-auth";
-import { safeLocale } from "@/i18n/config";
+import { locales, safeLocale } from "@/i18n/config";
 import {
   addProductImages,
   deleteCollection,
+  deletePackCard,
   deleteProduct,
   getAllProductsForAdmin,
   getCollectionBySlug,
   getCollections,
+  getPackCards,
   getProductById,
   removeProductImage,
   setOrderStatus,
+  setPackCardImage,
   updateSettings,
   upsertCollection,
+  upsertPackCardWords,
   upsertProduct,
 } from "@/lib/data";
 import { slugify, uniqueSlug } from "@/lib/format";
@@ -23,6 +27,7 @@ import { PRODUCT_TYPES, type Collection, type Localized, type Product } from "@/
 import {
   deleteUploadedImage,
   InvalidUpload,
+  saveCardImage,
   saveCollectionImage,
   saveProductImage,
 } from "@/lib/uploads";
@@ -61,6 +66,7 @@ const productSchema = z.object({
   cardCount: z.coerce.number().int().min(0).max(100000).optional(),
   isActive: z.coerce.boolean(),
   featured: z.coerce.boolean(),
+  audioEnabled: z.coerce.boolean(),
   title_fr: z.string().trim().min(1, "Le titre est obligatoire."),
   title_ar: z.string().trim().default(""),
   title_en: z.string().trim().default(""),
@@ -110,6 +116,7 @@ export async function saveProduct(
     ...raw,
     isActive: raw.isActive === "on" || raw.isActive === "true",
     featured: raw.featured === "on" || raw.featured === "true",
+    audioEnabled: raw.audioEnabled === "on" || raw.audioEnabled === "true",
     compareAtMad: raw.compareAtMad ? raw.compareAtMad : undefined,
     cardCount: raw.cardCount ? raw.cardCount : undefined,
   });
@@ -130,6 +137,14 @@ export async function saveProduct(
     .map((p) => p.slug);
   const slug = d.slug || uniqueSlug(slugify(d.title_fr), existingSlugs);
 
+  // The slug is in every printed QR code (/ecoute/<slug>/<n>): once a pack
+  // has cards, changing it would break the cards already sold.
+  if (existing && slug !== existing.slug && (await getPackCards(existing.id)).length > 0) {
+    return {
+      error: `Ce pack a des cartes audio : son slug « ${existing.slug} » est imprimé dans les QR codes et ne peut plus changer.`,
+    };
+  }
+
   const product: Product = {
     id: d.id,
     slug,
@@ -144,6 +159,7 @@ export async function saveProduct(
     cardCount: d.cardCount || undefined,
     isActive: d.isActive,
     featured: d.featured,
+    audioEnabled: d.audioEnabled,
     title: { fr: d.title_fr, ar: d.title_ar || d.title_fr, en: d.title_en || d.title_fr },
     tagline: { fr: d.tagline_fr, ar: d.tagline_ar, en: d.tagline_en },
     description: {
@@ -158,6 +174,7 @@ export async function saveProduct(
   await upsertProduct(product);
   revalidatePath(`/${lang}/admin/products`);
   revalidatePath(`/${lang}/products/${product.slug}`);
+  revalidateListenPages(product.slug);
   return { ok: true };
 }
 
@@ -165,7 +182,12 @@ export async function removeProduct(formData: FormData): Promise<void> {
   if (!(await isAdmin())) throw new Error("Unauthorized");
   const id = String(formData.get("id") ?? "");
   const lang = safeLocale(formData.get("lang"));
-  if (id) await deleteProduct(id);
+  if (id) {
+    // Card rows go with the product (on delete cascade); their images don't.
+    const cardImages = (await getPackCards(id)).flatMap((c) => (c.image ? [c.image] : []));
+    await deleteProduct(id);
+    await Promise.all(cardImages.map(deleteUploadedImage));
+  }
   revalidatePath(`/${lang}/admin/products`);
 }
 
@@ -238,6 +260,194 @@ export async function removeProductImageAction(formData: FormData): Promise<void
   await deleteUploadedImage(url);
   revalidatePath(`/${lang}/admin/products/${id}`);
   revalidatePath(`/${lang}/products/${product.slug}`);
+}
+
+/* ---------------------------- audio pack cards --------------------------- */
+
+/** Listen pages are cached per locale; bust them all after a card edit. */
+function revalidateListenPages(slug: string) {
+  for (const l of locales) {
+    revalidatePath(`/${l}/ecoute/${slug}`, "layout");
+    revalidatePath(`/${l}/products/${slug}`);
+  }
+}
+
+const UPLOAD_ERRORS = {
+  type: "Format accepté : JPG, PNG, WebP ou AVIF.",
+  size: "Image trop lourde (5 Mo maximum).",
+  empty: "Fichier vide.",
+} as const;
+
+const MAX_CARD_NUMBER = 1000;
+
+export interface PackCardsImportState {
+  ok?: boolean;
+  error?: string;
+  count?: number;
+}
+
+/**
+ * Bulk-creates / updates cards from pasted rows, one card per line:
+ * `numéro ; arabe ; français ; anglais [; phrase ar ; phrase fr ; phrase en]`.
+ * Cells may be separated by tabs (pasted from Excel), `;` or `|`. Without a
+ * leading number, a line takes the number after the previous one.
+ */
+export async function importPackCards(
+  _prev: PackCardsImportState,
+  formData: FormData,
+): Promise<PackCardsImportState> {
+  if (!(await isAdmin())) return { error: "Non autorisé." };
+  const id = String(formData.get("id") ?? "");
+  const lang = safeLocale(formData.get("lang"));
+  const product = await getProductById(id);
+  if (!product) return { error: "Produit introuvable." };
+
+  const lines = String(formData.get("rows") ?? "")
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter((l) => l && !l.startsWith("#"));
+  if (lines.length === 0) return { error: "Colle au moins une ligne." };
+  if (lines.length > MAX_CARD_NUMBER)
+    return { error: `Maximum ${MAX_CARD_NUMBER} lignes.` };
+
+  const cards: { n: number; word: Localized; sentence?: Localized }[] = [];
+  let lastN = 0;
+  for (const [i, line] of lines.entries()) {
+    const sep = line.includes("\t") ? "\t" : line.includes(";") ? ";" : "|";
+    let cells = line.split(sep).map((c) => c.trim());
+    const numbered = /^\d+$/.test(cells[0]);
+    // A header row ("numéro ; arabe ; …") at the top is skipped.
+    if (i === 0 && !numbered && /^(n°?|num|numéro|no|رقم)/i.test(cells[0]))
+      continue;
+    const n = numbered ? Number(cells[0]) : lastN + 1;
+    if (numbered) cells = cells.slice(1);
+    if (n < 1 || n > MAX_CARD_NUMBER)
+      return { error: `Ligne ${i + 1} : numéro invalide.` };
+    const [ar, fr, en, sAr, sFr, sEn] = cells;
+    if (!ar || !fr || !en) {
+      return {
+        error: `Ligne ${i + 1} : il faut le mot en arabe, en français et en anglais.`,
+      };
+    }
+    if (cards.some((c) => c.n === n))
+      return { error: `Ligne ${i + 1} : la carte ${n} est en double.` };
+    const sentence =
+      sAr || sFr || sEn
+        ? { ar: sAr ?? "", fr: sFr ?? "", en: sEn ?? "" }
+        : undefined;
+    cards.push({ n, word: { ar, fr, en }, sentence });
+    lastN = n;
+  }
+
+  await upsertPackCardWords(id, cards);
+  revalidatePath(`/${lang}/admin/products/${id}/cards`);
+  revalidateListenPages(product.slug);
+  return { ok: true, count: cards.length };
+}
+
+export interface PackCardImagesResult {
+  /** Card numbers that got a new image. */
+  matched: number[];
+  /** File names that matched no card. */
+  skipped: string[];
+  error?: string;
+}
+
+/**
+ * Attaches images to cards by file name: `12.png`, `012.webp` or
+ * `carte-12.jpg` all go to card 12. Called in small batches by the admin
+ * uploader to stay under the Server Action body size limit.
+ */
+export async function uploadPackCardImages(
+  formData: FormData,
+): Promise<PackCardImagesResult> {
+  if (!(await isAdmin()))
+    return { matched: [], skipped: [], error: "Non autorisé." };
+  const id = String(formData.get("id") ?? "");
+  const product = await getProductById(id);
+  if (!product)
+    return { matched: [], skipped: [], error: "Produit introuvable." };
+
+  const known = new Set((await getPackCards(id)).map((c) => c.n));
+  const files = formData
+    .getAll("images")
+    .filter((v): v is File => v instanceof File && v.size > 0);
+  const result: PackCardImagesResult = { matched: [], skipped: [] };
+
+  for (const file of files) {
+    const n = Number(/\d+/.exec(file.name.replace(/\.[^.]+$/, ""))?.[0]);
+    if (!known.has(n)) {
+      result.skipped.push(file.name);
+      continue;
+    }
+    try {
+      const url = await saveCardImage(file);
+      const previous = await setPackCardImage(id, n, url);
+      if (previous) await deleteUploadedImage(previous);
+      result.matched.push(n);
+    } catch (err) {
+      result.error =
+        err instanceof InvalidUpload
+          ? `${file.name} : ${UPLOAD_ERRORS[err.reason]}`
+          : `${file.name} : échec de l’upload.`;
+      break;
+    }
+  }
+
+  revalidateListenPages(product.slug);
+  return result;
+}
+
+/** Edits one card's words and sentence, and optionally replaces its image. */
+export async function savePackCard(formData: FormData): Promise<void> {
+  if (!(await isAdmin())) throw new Error("Unauthorized");
+  const id = String(formData.get("id") ?? "");
+  const n = Number(formData.get("n"));
+  const lang = safeLocale(formData.get("lang"));
+  const product = await getProductById(id);
+  if (!product || !Number.isInteger(n)) return;
+
+  const field = (name: string) => String(formData.get(name) ?? "").trim();
+  const word = { ar: field("ar"), fr: field("fr"), en: field("en") };
+  if (!word.ar && !word.fr && !word.en) return;
+  const sentence = { ar: field("s_ar"), fr: field("s_fr"), en: field("s_en") };
+  await upsertPackCardWords(id, [
+    {
+      n,
+      word,
+      sentence:
+        sentence.ar || sentence.fr || sentence.en ? sentence : undefined,
+    },
+  ]);
+
+  const file = formData.get("image");
+  if (file instanceof File && file.size > 0) {
+    try {
+      const url = await saveCardImage(file);
+      const previous = await setPackCardImage(id, n, url);
+      if (previous) await deleteUploadedImage(previous);
+    } catch (err) {
+      if (!(err instanceof InvalidUpload)) throw err;
+      // A bad file just leaves the old image — the words are saved.
+    }
+  }
+
+  revalidatePath(`/${lang}/admin/products/${id}/cards`);
+  revalidateListenPages(product.slug);
+}
+
+export async function removePackCard(formData: FormData): Promise<void> {
+  if (!(await isAdmin())) throw new Error("Unauthorized");
+  const id = String(formData.get("id") ?? "");
+  const n = Number(formData.get("n"));
+  const lang = safeLocale(formData.get("lang"));
+  const product = await getProductById(id);
+  if (!product || !Number.isInteger(n)) return;
+
+  const image = await deletePackCard(id, n);
+  if (image) await deleteUploadedImage(image);
+  revalidatePath(`/${lang}/admin/products/${id}/cards`);
+  revalidateListenPages(product.slug);
 }
 
 /* ----------------------------- collections ------------------------------ */

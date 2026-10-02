@@ -57,6 +57,22 @@ export interface Product {
   cardCount?: number;
   featured: boolean;
   isActive: boolean;
+  /**
+   * Audio pack: each printed card has a QR code opening its listen page,
+   * `/ecoute/<slug>/<n>`. Works even when the product is inactive — buyers
+   * keep their cards. Cards live in `PackCard`.
+   */
+  audioEnabled: boolean;
+}
+
+/** One card of an audio pack, numbered as printed. */
+export interface PackCard {
+  productId: string;
+  n: number;
+  word: Localized;
+  /** Optional example sentence, e.g. "Je vois une pomme." */
+  sentence?: Localized;
+  image?: string;
 }
 
 /** Store-wide settings, editable from the admin. Singleton row in Supabase. */

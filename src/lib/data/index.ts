@@ -11,11 +11,29 @@ import {
   shippingFor,
 } from "@/lib/site";
 import { supabaseAdmin } from "@/lib/supabase";
+import { seedPackCards } from "./amri-cards";
 import { seedCollections } from "./collections-seed";
 import { seedProducts } from "./seed";
-import type { Collection, Order, OrderItem, OrderStatus, Product, Settings } from "./types";
+import type {
+  Collection,
+  Localized,
+  Order,
+  OrderItem,
+  OrderStatus,
+  PackCard,
+  Product,
+  Settings,
+} from "./types";
 
-export type { Collection, Order, OrderItem, OrderStatus, Product, Settings } from "./types";
+export type {
+  Collection,
+  Order,
+  OrderItem,
+  OrderStatus,
+  PackCard,
+  Product,
+  Settings,
+} from "./types";
 
 /**
  * Data layer. Reads from the local seed unless `NEXT_PUBLIC_SUPABASE_URL` is
@@ -68,6 +86,18 @@ function rowToProduct(row: any): Product {
     cardCount: row.card_count ?? undefined,
     featured: row.featured,
     isActive: row.is_active,
+    audioEnabled: row.audio_enabled ?? false,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function rowToPackCard(row: any): PackCard {
+  return {
+    productId: row.product_id,
+    n: row.n,
+    word: row.word,
+    sentence: row.sentence ?? undefined,
+    image: row.image ?? undefined,
   };
 }
 
@@ -448,6 +478,7 @@ export async function upsertProduct(product: Product): Promise<Product> {
         images: product.images,
         featured: product.featured,
         is_active: product.isActive,
+        audio_enabled: product.audioEnabled,
       },
       { onConflict: "id" },
     );
@@ -508,6 +539,125 @@ export async function removeProductImage(
   if (!product) return null;
   product.images = product.images.filter((u) => u !== url);
   return clone(product);
+}
+
+/* ------------------------------ audio packs ------------------------------ */
+
+/**
+ * The product behind a listen page. Deliberately ignores `is_active`: a pack
+ * taken off sale must keep working for the people who already own it.
+ */
+export async function getAudioPack(slug: string): Promise<Product | null> {
+  if (USING_SUPABASE) {
+    const { data, error } = await supabaseAdmin
+      .from("products")
+      .select("*")
+      .eq("slug", slug)
+      .eq("audio_enabled", true)
+      .maybeSingle();
+    if (error) throw error;
+    return data ? rowToProduct(data) : null;
+  }
+  const product = seedProducts.find((p) => p.slug === slug && p.audioEnabled);
+  return product ? clone(product) : null;
+}
+
+export async function getPackCards(productId: string): Promise<PackCard[]> {
+  if (USING_SUPABASE) {
+    const { data, error } = await supabaseAdmin
+      .from("pack_cards")
+      .select("*")
+      .eq("product_id", productId)
+      .order("n", { ascending: true });
+    if (error) throw error;
+    return data.map(rowToPackCard);
+  }
+  return seedPackCards
+    .filter((c) => c.productId === productId)
+    .sort((a, b) => a.n - b.n)
+    .map(clone);
+}
+
+export async function getPackCard(productId: string, n: number): Promise<PackCard | null> {
+  if (USING_SUPABASE) {
+    const { data, error } = await supabaseAdmin
+      .from("pack_cards")
+      .select("*")
+      .eq("product_id", productId)
+      .eq("n", n)
+      .maybeSingle();
+    if (error) throw error;
+    return data ? rowToPackCard(data) : null;
+  }
+  const card = seedPackCards.find((c) => c.productId === productId && c.n === n);
+  return card ? clone(card) : null;
+}
+
+/** Creates or updates cards' words by number. Leaves their images alone. */
+export async function upsertPackCardWords(
+  productId: string,
+  cards: { n: number; word: Localized; sentence?: Localized }[],
+): Promise<void> {
+  if (cards.length === 0) return;
+  if (USING_SUPABASE) {
+    const { error } = await supabaseAdmin.from("pack_cards").upsert(
+      cards.map((c) => ({
+        product_id: productId,
+        n: c.n,
+        word: c.word,
+        sentence: c.sentence ?? null,
+      })),
+      { onConflict: "product_id,n" },
+    );
+    if (error) throw error;
+    return;
+  }
+  for (const c of cards) {
+    const existing = seedPackCards.find((x) => x.productId === productId && x.n === c.n);
+    if (existing) Object.assign(existing, { word: c.word, sentence: c.sentence });
+    else seedPackCards.push({ productId, ...c });
+  }
+}
+
+/** Sets a card's image. Returns the URL it replaced, if any. */
+export async function setPackCardImage(
+  productId: string,
+  n: number,
+  url: string,
+): Promise<string | undefined> {
+  const previous = (await getPackCard(productId, n))?.image;
+  if (USING_SUPABASE) {
+    const { error } = await supabaseAdmin
+      .from("pack_cards")
+      .update({ image: url })
+      .eq("product_id", productId)
+      .eq("n", n);
+    if (error) throw error;
+    return previous;
+  }
+  const card = seedPackCards.find((c) => c.productId === productId && c.n === n);
+  if (card) card.image = url;
+  return previous;
+}
+
+/** Deletes a card. Returns its image URL so the caller can clean it up. */
+export async function deletePackCard(
+  productId: string,
+  n: number,
+): Promise<string | undefined> {
+  const previous = (await getPackCard(productId, n))?.image;
+  if (USING_SUPABASE) {
+    const { error } = await supabaseAdmin
+      .from("pack_cards")
+      .delete()
+      .eq("product_id", productId)
+      .eq("n", n);
+    if (error) throw error;
+    return previous;
+  }
+  const idx = seedPackCards.findIndex((c) => c.productId === productId && c.n === n);
+  if (idx >= 0) seedPackCards.splice(idx, 1);
+  return previous;
 }
 
 /* -------------------------------- settings ------------------------------- */

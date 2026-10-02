@@ -2,7 +2,7 @@
 
 import { localeNames, type Locale } from "@/i18n/config";
 import { t } from "@/i18n/t";
-import type { AmriCard } from "@/lib/data/amri-cards";
+import type { Localized } from "@/lib/data/types";
 import { cn } from "@/lib/utils";
 import { useSpeech, type SpeechItem } from "./use-speech";
 
@@ -45,18 +45,20 @@ function SpeakButton({
 }
 
 export function CardPlayer({
-  card,
+  word,
   sentence,
   labels,
 }: {
-  card: AmriCard;
-  sentence: Record<Locale, string>;
+  word: Localized;
+  sentence?: Localized;
   labels: CardPlayerLabels;
 }) {
   const { supported, speaking, speak, missing } = useSpeech();
-  const words: SpeechItem[] = ROWS.map(({ locale }) => ({
+  // Skip a language the card has no word for.
+  const rows = ROWS.filter(({ locale }) => word[locale]);
+  const words: SpeechItem[] = rows.map(({ locale }) => ({
     key: `word-${locale}`,
-    text: card[locale],
+    text: word[locale],
     locale,
   }));
 
@@ -71,15 +73,19 @@ export function CardPlayer({
         🔊 {labels.listenAll}
       </button>
 
-      {!supported && <p className="text-sm text-riso-orange">{labels.noSpeech}</p>}
+      {!supported && (
+        <p className="text-sm text-riso-orange">{labels.noSpeech}</p>
+      )}
       {missing.length > 0 && (
         <p className="text-sm text-ink-soft">
-          {t(labels.noVoice, { langs: missing.map((l) => localeNames[l]).join(", ") })}
+          {t(labels.noVoice, {
+            langs: missing.map((l) => localeNames[l]).join(", "),
+          })}
         </p>
       )}
 
       <ul className="space-y-2.5">
-        {ROWS.map(({ locale, badge, tint }, i) => (
+        {rows.map(({ locale, badge, tint }, i) => (
           <li
             key={locale}
             className={cn(
@@ -99,7 +105,7 @@ export function CardPlayer({
                 locale === "ar" ? "text-3xl" : "text-xl",
               )}
             >
-              {card[locale]}
+              {word[locale]}
             </span>
             <SpeakButton
               active={speaking === words[i].key}
@@ -110,32 +116,36 @@ export function CardPlayer({
         ))}
       </ul>
 
-      <section className="card p-4">
-        <h2 className="text-xs font-bold uppercase tracking-wide text-ink-soft">
-          {labels.sentenceTitle}
-        </h2>
-        <ul className="mt-2 space-y-1.5">
-          {ROWS.map(({ locale }) => {
-            const key = `sentence-${locale}`;
-            return (
-              <li key={locale} className="flex items-center gap-3">
-                <span
-                  lang={locale}
-                  dir={locale === "ar" ? "rtl" : "ltr"}
-                  className="flex-1 font-semibold"
-                >
-                  {sentence[locale]}
-                </span>
-                <SpeakButton
-                  active={speaking === key}
-                  label={`${labels.listen} — ${localeNames[locale]}`}
-                  onClick={() => speak([{ key, text: sentence[locale], locale }])}
-                />
-              </li>
-            );
-          })}
-        </ul>
-      </section>
+      {sentence && (
+        <section className="card p-4">
+          <h2 className="text-xs font-bold uppercase tracking-wide text-ink-soft">
+            {labels.sentenceTitle}
+          </h2>
+          <ul className="mt-2 space-y-1.5">
+            {ROWS.filter(({ locale }) => sentence[locale]).map(({ locale }) => {
+              const key = `sentence-${locale}`;
+              return (
+                <li key={locale} className="flex items-center gap-3">
+                  <span
+                    lang={locale}
+                    dir={locale === "ar" ? "rtl" : "ltr"}
+                    className="flex-1 font-semibold"
+                  >
+                    {sentence[locale]}
+                  </span>
+                  <SpeakButton
+                    active={speaking === key}
+                    label={`${labels.listen} — ${localeNames[locale]}`}
+                    onClick={() =>
+                      speak([{ key, text: sentence[locale], locale }])
+                    }
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }

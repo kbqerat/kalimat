@@ -1,45 +1,21 @@
-import type { Locale } from "@/i18n/config";
+import type { Localized, PackCard } from "./types";
 
 /**
- * The "Amri — 100 cartes Premium" pack, card by card, as printed. Powers the
- * free online version (`/[lang]/amri`) that buyers of the physical pack reach
- * through the "Écoute / استمع" QR code on each card — each QR should encode
- * `https://<domain>/amri/<n>` (the proxy adds the visitor's locale).
+ * Seed for the "Amri — 100 cartes Premium" audio pack: the words exactly as
+ * printed on the cards. The listen pages read cards from the `pack_cards`
+ * table (edited in /admin); this file is what `npm run db:add-amri` loads
+ * into it, and the mock backend's starting content.
  *
  * Illustrations are cropped from the print PDF into `public/pack/amri/art/`.
  */
 
-/** Slug of the physical pack's product — its page advertises the online version. */
+/**
+ * The pack's product slug. The QR codes printed on the first run encode
+ * `/amri/<n>`, which redirects to `/ecoute/<this slug>/<n>` — never change
+ * either.
+ */
 export const AMRI_PRODUCT_SLUG = "amri-100-cartes-premium";
-
-export type AmriTheme =
-  | "fruits"
-  | "vegetables"
-  | "food"
-  | "animals"
-  | "transport"
-  | "nature"
-  | "home"
-  | "objects";
-
-export const AMRI_THEMES: { slug: AmriTheme; from: number; to: number; name: Record<Locale, string> }[] = [
-  { slug: "fruits", from: 1, to: 10, name: { fr: "Fruits", ar: "الفواكه", en: "Fruits" } },
-  { slug: "vegetables", from: 11, to: 18, name: { fr: "Légumes", ar: "الخضر", en: "Vegetables" } },
-  { slug: "food", from: 19, to: 26, name: { fr: "Nourriture", ar: "الأطعمة", en: "Food" } },
-  { slug: "animals", from: 27, to: 50, name: { fr: "Animaux", ar: "الحيوانات", en: "Animals" } },
-  { slug: "transport", from: 51, to: 60, name: { fr: "Transports", ar: "وسائل النقل", en: "Transport" } },
-  { slug: "nature", from: 61, to: 72, name: { fr: "Nature", ar: "الطبيعة", en: "Nature" } },
-  { slug: "home", from: 73, to: 78, name: { fr: "La maison", ar: "البيت", en: "Home" } },
-  { slug: "objects", from: 79, to: 100, name: { fr: "Objets", ar: "الأشياء", en: "Objects" } },
-];
-
-export interface AmriCard {
-  n: number;
-  ar: string;
-  /** French with its article, as printed: "une pomme". */
-  fr: string;
-  en: string;
-}
+export const AMRI_PRODUCT_ID = "prd_amri_100";
 
 // [ar, fr, en] in card order — card n is index n - 1.
 const RAW: [string, string, string][] = [
@@ -145,29 +121,21 @@ const RAW: [string, string, string][] = [
   ["كوب", "un verre", "glass"],
 ];
 
-export const AMRI_CARDS: AmriCard[] = RAW.map(([ar, fr, en], i) => ({ n: i + 1, ar, fr, en }));
-
-export const AMRI_CARD_COUNT = AMRI_CARDS.length;
-
-export function getAmriCard(n: number): AmriCard | undefined {
-  return Number.isInteger(n) ? AMRI_CARDS[n - 1] : undefined;
-}
-
-export function amriArt(n: number): string {
+function amriArt(n: number): string {
   return `/pack/amri/art/${String(n).padStart(3, "0")}.webp`;
 }
 
-export function amriTheme(n: number) {
-  return AMRI_THEMES.find((t) => n >= t.from && n <= t.to)!;
+/** The back-of-card "phrase utile": "Je vois une pomme." / "I see an apple." */
+function amriSentence(ar: string, fr: string, en: string): Localized {
+  const definite = /^(le|la) /.test(fr);
+  const article = definite ? "the" : /^[aeiou]/i.test(en) ? "an" : "a";
+  return { fr: `Je vois ${fr}.`, ar: `أنا أرى ${ar}`, en: `I see ${article} ${en}.` };
 }
 
-/** The back-of-card "phrase utile": "Je vois une pomme." / "I see an apple." */
-export function amriSentence(card: AmriCard): Record<Locale, string> {
-  const definite = /^(le|la) /.test(card.fr);
-  const article = definite ? "the" : /^[aeiou]/i.test(card.en) ? "an" : "a";
-  return {
-    fr: `Je vois ${card.fr}.`,
-    ar: `أنا أرى ${card.ar}`,
-    en: `I see ${article} ${card.en}.`,
-  };
-}
+export const seedPackCards: PackCard[] = RAW.map(([ar, fr, en], i) => ({
+  productId: AMRI_PRODUCT_ID,
+  n: i + 1,
+  word: { ar, fr, en },
+  sentence: amriSentence(ar, fr, en),
+  image: amriArt(i + 1),
+}));

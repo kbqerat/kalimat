@@ -78,6 +78,32 @@ export function ProductForm({
           <Check name="isActive" label="Actif" defaultChecked={product.isActive} />
           <Check name="featured" label="En vitrine" defaultChecked={product.featured} />
         </div>
+        <label className="flex items-start gap-2 text-sm sm:col-span-2">
+          <input
+            type="checkbox"
+            name="audioEnabled"
+            defaultChecked={product.audioEnabled}
+            onChange={(e) => {
+              if (
+                product.audioEnabled &&
+                !e.target.checked &&
+                !confirm(
+                  "Désactiver la version audio ? Les QR codes déjà imprimés sur les cartes de ce pack ne marcheront plus.",
+                )
+              ) {
+                e.target.checked = true;
+              }
+            }}
+            className="mt-0.5 h-4 w-4"
+          />
+          <span>
+            Version audio (QR)
+            <span className="block text-xs text-ink-soft">
+              Chaque carte du pack a un QR code qui ouvre une page où on écoute le mot en arabe,
+              français et anglais. Les cartes se gèrent après l’enregistrement.
+            </span>
+          </span>
+        </label>
       </Fieldset>
 
       <details className="rounded-xl border border-line p-4">
