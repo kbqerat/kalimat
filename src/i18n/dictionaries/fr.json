@@ -224,5 +224,25 @@
   "pagination": {
     "prev": "Précédent",
     "next": "Suivant"
+  },
+  "amri": {
+    "eyebrow": "Pack Amri · Version numérique",
+    "title": "Les 100 cartes Amri à écouter",
+    "subtitle": "Chaque carte du pack, prononcée en arabe, en français et en anglais.",
+    "hint": "Touchez une carte, puis 🔊 pour entendre le mot.",
+    "cardOf": "Carte {n} / {total}",
+    "listenAll": "Tout écouter",
+    "listen": "Écouter",
+    "sentenceTitle": "Une phrase utile",
+    "prev": "Précédente",
+    "next": "Suivante",
+    "allCards": "Toutes les cartes",
+    "noSpeech": "Ce navigateur ne peut pas lire le son. Essayez avec Chrome ou Safari.",
+    "noVoice": "Cet appareil n'a pas de voix installée pour : {langs}.",
+    "promoTitle": "Vous n'avez pas encore le pack ?",
+    "promoBody": "Les 100 cartes imprimées, recto verso, avec un QR code sur chaque carte.",
+    "promoCta": "Voir le pack",
+    "includedTitle": "Version numérique incluse",
+    "includedBody": "Chaque carte porte un QR code « Écoute » : scannez-le avec un téléphone pour entendre le mot en arabe, en français et en anglais. Aucune application à installer."
   }
 }

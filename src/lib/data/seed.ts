@@ -6,6 +6,65 @@ import type { Product } from "./types";
  */
 export const seedProducts: Product[] = [
   {
+    // Card contents + the free online version live in amri-cards.ts. The
+    // slug must match AMRI_PRODUCT_SLUG there. Price is a placeholder.
+    id: "prd_amri_100",
+    slug: "amri-100-cartes-premium",
+    title: {
+      fr: "Amri · 100 cartes Premium arabe – français – anglais",
+      ar: "Amri · 100 بطاقة بريميوم عربي – فرنسي – إنجليزي",
+      en: "Amri · 100 Premium cards Arabic – French – English",
+    },
+    tagline: {
+      fr: "Regarde, prononce, mémorise — et écoute chaque mot grâce au QR code",
+      ar: "شاهد، انطق، تذكّر — واستمع إلى كل كلمة عبر رمز QR",
+      en: "Look, say, remember — and hear every word through the QR code",
+    },
+    description: {
+      fr: "100 cartes illustrées recto verso pour apprendre ses premiers mots en trois langues. Au recto : l'image et le mot en arabe, en français et en anglais. Au verso : la couleur, l'endroit où on le trouve, la bonne phrase à choisir et une phrase utile.\n\nChaque carte porte un QR code « Écoute » : scannez-le avec un téléphone pour entendre le mot prononcé dans les trois langues.",
+      ar: "100 بطاقة مصوّرة على الوجهين لتعلّم الكلمات الأولى بثلاث لغات. على الوجه الأمامي: الصورة والكلمة بالعربية والفرنسية والإنجليزية. وعلى الظهر: اللون، والمكان الذي نجده فيه، واختيار الجملة الصحيحة، وجملة مفيدة.\n\nعلى كل بطاقة رمز QR «استمع»: امسحه بالهاتف لسماع نطق الكلمة باللغات الثلاث.",
+      en: "100 illustrated double-sided cards to learn first words in three languages. Front: the picture and the word in Arabic, French and English. Back: its colour, where to find it, pick-the-right-sentence and a useful sentence.\n\nEvery card has a “Listen” QR code: scan it with a phone to hear the word spoken in all three languages.",
+    },
+    type: "pack",
+    collectionSlug: "cartes-arabe",
+    priceMad: 199,
+    stock: 50,
+    rating: 5,
+    ratingCount: 0,
+    salesCount: 0,
+    images: [
+      "/pack/amri/photos/cover.webp",
+      "/pack/amri/photos/recto-verso.webp",
+      "/pack/amri/photos/themes.webp",
+      "/pack/amri/photos/qr-demo.webp",
+    ],
+    highlights: [
+      {
+        fr: "100 cartes recto verso, 8 thèmes",
+        ar: "100 بطاقة على الوجهين، 8 مواضيع",
+        en: "100 double-sided cards, 8 themes",
+      },
+      {
+        fr: "Chaque mot en arabe, français et anglais",
+        ar: "كل كلمة بالعربية والفرنسية والإنجليزية",
+        en: "Every word in Arabic, French and English",
+      },
+      {
+        fr: "Au verso : couleurs, lieux, phrases",
+        ar: "على الظهر: الألوان، الأماكن، الجمل",
+        en: "On the back: colours, places, sentences",
+      },
+      {
+        fr: "Version audio en ligne incluse (QR code)",
+        ar: "نسخة صوتية على الإنترنت مجانية (رمز QR)",
+        en: "Online audio version included (QR code)",
+      },
+    ],
+    cardCount: 100,
+    featured: true,
+    isActive: true,
+  },
+  {
     id: "prd_flags_capitals",
     slug: "72-cartes-drapeaux-pays-capitales",
     title: {

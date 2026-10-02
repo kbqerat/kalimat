@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -10,6 +11,7 @@ import { getDictionary } from "@/i18n/get-dictionary";
 import { t } from "@/i18n/t";
 import { localeHref } from "@/i18n/routing";
 import { getCollectionBySlug, getCollections, getProductBySlug, getProducts } from "@/lib/data";
+import { AMRI_PRODUCT_SLUG, amriArt } from "@/lib/data/amri-cards";
 import { formatMad } from "@/lib/format";
 
 export async function generateStaticParams() {
@@ -175,6 +177,31 @@ export default async function ProductPage({
           )}
         </div>
       </div>
+
+      {product.slug === AMRI_PRODUCT_SLUG && (
+        <section className="mt-10 card p-6 sm:p-8">
+          <div className="flex items-center gap-3">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-riso-orange/10 text-lg">
+              🔊
+            </span>
+            <h2 className="font-display text-xl">{dict.amri.includedTitle}</h2>
+          </div>
+          <p className="mt-4 max-w-prose text-[15px] leading-[1.9] text-ink-soft">
+            {dict.amri.includedBody}
+          </p>
+          <div className="mt-5 grid grid-cols-4 gap-2 sm:grid-cols-8">
+            {[1, 27, 45, 51, 61, 80, 90, 95].map((n) => (
+              <img
+                key={n}
+                src={amriArt(n)}
+                alt=""
+                loading="lazy"
+                className="aspect-square w-full rounded-xl border border-line object-cover"
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="mt-10 card p-6 sm:p-8">
         <div className="flex items-center gap-3">
