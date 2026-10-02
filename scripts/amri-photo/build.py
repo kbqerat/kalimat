@@ -5,8 +5,7 @@ Builds the Amri photo-cards pack from the designer's print PDFs:
     <BASE>/ecoute/amri-photo-80/<n>. Same files and split as the input
     (AMRI_cards_print_ready.pdf, AMRI_cards_9_to_16_print_ready.pdf, ...),
     one card face per page, front then back;
-  * the site's card images, public/pack/amri-photo/cards/<nnn>.webp;
-  * the product photos, public/pack/amri-photo/photos/.
+  * the site's card images, public/pack/amri-photo/cards/<nnn>.webp.
 
 The designs are 768x1024 AI renders with a fake QR code; they are upscaled
 x4 with Real-ESRGAN first (sharp at print size), then printed at 1536x2048
@@ -18,6 +17,7 @@ in the same style.
   python scripts/amri-photo/build.py faces   IN_DIR WORK_DIR
   realesrgan-ncnn-vulkan -n realesrgan-x4plus -i WORK_DIR/faces -o WORK_DIR/x4
   python scripts/amri-photo/build.py build   IN_DIR WORK_DIR OUT_DIR [BASE_URL]
+  python scripts/amri-photo/photos.py WORK_DIR   # the shop photos
 """
 import glob
 import io
@@ -60,6 +60,31 @@ def pdfs(in_dir):
     return sorted(glob.glob(os.path.join(in_dir, "AMRI_cards_*print_ready.pdf")), key=pdf_start)
 
 
+def split_pair(im):
+    """Front and back from a side-by-side render, each fitted to W x H.
+
+    The two cards don't meet at the middle, so cut in the gap between their
+    blue frames; a side wider than W is scaled down and the rest filled by
+    mirroring the background.
+    """
+    hsv = cv2.cvtColor(np.asarray(im), cv2.COLOR_RGB2HSV)
+    blue = (hsv[..., 0] > 100) & (hsv[..., 0] < 130) & (hsv[..., 1] > 110) & (hsv[..., 2] > 90)
+    framed = blue[100 : H - 100].mean(axis=0) > 0.5
+    # Near the middle: the front's right frame, a gap, the back's left frame.
+    xs = [x for x in range(W - 80, W + 80) if framed[x]]
+    (gap_start, gap_end), *_ = [(a, b) for a, b in zip(xs, xs[1:]) if b - a > 1]
+    mid = (gap_start + gap_end + 1) // 2
+    out = []
+    for box in ((0, 0, mid, H), (mid, 0, 2 * W, H)):
+        side = np.asarray(im.crop(box))
+        k = min(1.0, W / side.shape[1])
+        side = cv2.resize(side, (round(side.shape[1] * k), round(H * k)), interpolation=cv2.INTER_AREA)
+        dx, dy = W - side.shape[1], H - side.shape[0]
+        side = cv2.copyMakeBorder(side, dy // 2, dy - dy // 2, dx // 2, dx - dx // 2, cv2.BORDER_REFLECT)
+        out.append(Image.fromarray(side))
+    return out
+
+
 def extract_faces(in_dir, work):
     out = os.path.join(work, "faces")
     os.makedirs(out, exist_ok=True)
@@ -72,7 +97,7 @@ def extract_faces(in_dir, work):
             im = Image.open(io.BytesIO(doc.extract_image(xref)["image"])).convert("RGB")
             if im.size == (2 * W, H):
                 # The 1-8 file squeezes front|back onto one page.
-                faces += [im.crop((0, 0, W, H)), im.crop((W, 0, 2 * W, H))]
+                faces += split_pair(im)
             else:
                 faces.append(im)
         order = PAGE_ORDER.get(start, range(start, start + len(faces) // 2))
@@ -202,9 +227,7 @@ def jpeg(img):
 def build(in_dir, work, out_dir, base):
     os.makedirs(out_dir, exist_ok=True)
     os.makedirs(f"{PUBLIC}/cards", exist_ok=True)
-    os.makedirs(f"{PUBLIC}/photos", exist_ok=True)
     added = []
-    fronts = {}
     for path in pdfs(in_dir):
         start = pdf_start(path)
         order = PAGE_ORDER.get(start, range(start, start + 8))
@@ -235,34 +258,10 @@ def build(in_dir, work, out_dir, base):
 
             web = front.copy()
             paint_qr(web, hole, matrix)
-            fronts[n] = (web, sides["back"])
             web.resize((600, 800), Image.LANCZOS).save(f"{PUBLIC}/cards/{n:03d}.webp", quality=86, method=6)
         doc.save(os.path.join(out_dir, os.path.basename(path)), garbage=3, deflate=True)
         print(f"{os.path.basename(path)}: cards {sorted(order)}")
     print(f"QR badge added to cards without one: {added}")
-    if len(fronts) == 80:
-        product_photos(fronts)
-
-
-def product_photos(fronts):
-    bg = (246, 241, 232)
-
-    def sheet(cards, cols, card_w, gap, path, pad=48):
-        ims = [fronts[n][0].resize((card_w, card_w * 4 // 3), Image.LANCZOS) for n in cards]
-        rows = (len(ims) + cols - 1) // cols
-        ch = card_w * 4 // 3
-        out = Image.new("RGB", (pad * 2 + cols * card_w + (cols - 1) * gap, pad * 2 + rows * ch + (rows - 1) * gap), bg)
-        for i, im in enumerate(ims):
-            out.paste(im, (pad + (i % cols) * (card_w + gap), pad + (i // cols) * (ch + gap)))
-        out.save(path, quality=86, method=6)
-
-    sheet([1, 21, 41, 56, 71, 80], 3, 420, 28, f"{PUBLIC}/photos/cover.webp")
-    sheet([2, 3, 5, 6, 13, 14, 20, 24, 29, 39, 42, 47, 52, 55, 62, 73], 4, 300, 20, f"{PUBLIC}/photos/themes.webp")
-    front, back = (im.resize((600, 800), Image.LANCZOS) for im in fronts[1])
-    out = Image.new("RGB", (48 * 2 + 1200 + 28, 48 * 2 + 800), bg)
-    out.paste(front, (48, 48))
-    out.paste(back, (48 + 600 + 28, 48))
-    out.save(f"{PUBLIC}/photos/recto-verso.webp", quality=86, method=6)
 
 
 if __name__ == "__main__":
