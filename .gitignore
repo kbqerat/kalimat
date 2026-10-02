@@ -45,3 +45,4 @@ next-env.d.ts
 
 # designer source files (print PDFs, large)
 /incoming
+__pycache__/
