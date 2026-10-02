@@ -7,8 +7,11 @@
  */
 import { createClient } from "@supabase/supabase-js";
 import { seedCollections } from "../src/lib/data/collections-seed.ts";
-import { seedPackCards } from "../src/lib/data/amri-cards.ts";
+import { amriCards } from "../src/lib/data/amri-cards.ts";
+import { amriPhotoCards } from "../src/lib/data/amri-photo-cards.ts";
 import { seedProducts } from "../src/lib/data/seed.ts";
+
+const seedPackCards = [...amriCards, ...amriPhotoCards];
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

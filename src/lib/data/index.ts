@@ -11,7 +11,8 @@ import {
   shippingFor,
 } from "@/lib/site";
 import { supabaseAdmin } from "@/lib/supabase";
-import { seedPackCards } from "./amri-cards";
+import { amriCards } from "./amri-cards";
+import { amriPhotoCards } from "./amri-photo-cards";
 import { seedCollections } from "./collections-seed";
 import { seedProducts } from "./seed";
 import type {
@@ -46,6 +47,9 @@ const USING_SUPABASE = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL);
 // In-memory order store for the mock backend. Not durable across server
 // restarts / serverless invocations — good enough to demo the flow.
 const mockOrders = new Map<string, Order>();
+
+// Every audio pack's cards for the mock backend (the pack_cards table).
+const seedPackCards: PackCard[] = [...amriCards, ...amriPhotoCards];
 
 // In-memory settings for the mock backend, seeded from the site.ts defaults.
 const mockSettings: Settings = {

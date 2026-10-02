@@ -68,7 +68,7 @@ export default async function ListenPackPage({
                   src={card.image}
                   alt={card.word.fr}
                   loading="lazy"
-                  className="mx-auto aspect-square w-full rounded-xl object-cover transition-transform group-hover:scale-105"
+                  className="mx-auto aspect-square w-full rounded-xl object-contain transition-transform group-hover:scale-105"
                 />
               ) : (
                 <span className="grid aspect-square w-full place-items-center rounded-xl bg-paper-deep text-3xl">

@@ -60,7 +60,7 @@ export default async function ListenCardPage({
       <div className="mt-5 grid items-start gap-6 md:grid-cols-2">
         <div className="card relative overflow-hidden">
           {card.image ? (
-            <img src={card.image} alt={card.word.fr} className="aspect-square w-full object-cover" />
+            <img src={card.image} alt={card.word.fr} className="aspect-square w-full bg-white object-contain" />
           ) : (
             <span className="grid aspect-square w-full place-items-center bg-paper-deep text-7xl">
               🔊

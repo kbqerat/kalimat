@@ -66,6 +66,65 @@ export const seedProducts: Product[] = [
     audioEnabled: true,
   },
   {
+    // Cards seeded from amri-photo-cards.ts; the slug must match
+    // AMRI_PHOTO_PRODUCT_SLUG there — it's printed in the QR codes.
+    id: "prd_amri_photo_80",
+    slug: "amri-photo-80",
+    title: {
+      fr: "Amri · 80 cartes photo arabe – français – anglais",
+      ar: "Amri · 80 بطاقة بالصور عربي – فرنسي – إنجليزي",
+      en: "Amri · 80 photo cards Arabic – French – English",
+    },
+    tagline: {
+      fr: "De vraies photos pour apprendre ses premiers mots — et un QR code pour les écouter",
+      ar: "صور حقيقية لتعلّم الكلمات الأولى — ورمز QR للاستماع إليها",
+      en: "Real photos to learn first words — and a QR code to hear them",
+    },
+    description: {
+      fr: "80 cartes recto verso illustrées de vraies photos : animaux, fruits et aliments, transports, la maison et les vêtements. Au recto : la photo et le mot en français, en anglais et en arabe. Au verso : des petites questions (la couleur, où on le trouve, la bonne phrase) pour jouer avec l'enfant.\n\nChaque carte porte un QR code « Écoute » : scannez-le avec un téléphone pour entendre le mot et sa phrase dans les trois langues.",
+      ar: "80 بطاقة على الوجهين بصور حقيقية: الحيوانات، الفواكه والأطعمة، وسائل النقل، المنزل والملابس. على الوجه الأمامي: الصورة والكلمة بالفرنسية والإنجليزية والعربية. وعلى الظهر: أسئلة صغيرة (اللون، أين نجده، الجملة الصحيحة) للّعب مع الطفل.\n\nعلى كل بطاقة رمز QR «استمع»: امسحه بالهاتف لسماع الكلمة وجملتها باللغات الثلاث.",
+      en: "80 double-sided cards with real photos: animals, fruit and food, transport, the home and clothes. Front: the photo and the word in French, English and Arabic. Back: little questions (its colour, where to find it, the right sentence) to play with your child.\n\nEvery card has a “Listen” QR code: scan it with a phone to hear the word and its sentence in all three languages.",
+    },
+    type: "pack",
+    collectionSlug: "cartes-arabe",
+    priceMad: 199,
+    stock: 50,
+    rating: 5,
+    ratingCount: 0,
+    salesCount: 0,
+    images: [
+      "/pack/amri-photo/photos/cover.webp",
+      "/pack/amri-photo/photos/recto-verso.webp",
+      "/pack/amri-photo/photos/themes.webp",
+    ],
+    highlights: [
+      {
+        fr: "80 cartes recto verso en vraies photos",
+        ar: "80 بطاقة على الوجهين بصور حقيقية",
+        en: "80 double-sided cards with real photos",
+      },
+      {
+        fr: "Animaux, aliments, transports, maison, vêtements",
+        ar: "حيوانات، أطعمة، وسائل نقل، منزل، ملابس",
+        en: "Animals, food, transport, home, clothes",
+      },
+      {
+        fr: "Chaque mot en arabe, français et anglais",
+        ar: "كل كلمة بالعربية والفرنسية والإنجليزية",
+        en: "Every word in Arabic, French and English",
+      },
+      {
+        fr: "Version audio en ligne incluse (QR code)",
+        ar: "نسخة صوتية على الإنترنت مجانية (رمز QR)",
+        en: "Online audio version included (QR code)",
+      },
+    ],
+    cardCount: 80,
+    featured: true,
+    isActive: true,
+    audioEnabled: true,
+  },
+  {
     id: "prd_flags_capitals",
     slug: "72-cartes-drapeaux-pays-capitales",
     title: {

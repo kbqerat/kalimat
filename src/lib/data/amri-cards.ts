@@ -132,7 +132,7 @@ function amriSentence(ar: string, fr: string, en: string): Localized {
   return { fr: `Je vois ${fr}.`, ar: `أنا أرى ${ar}`, en: `I see ${article} ${en}.` };
 }
 
-export const seedPackCards: PackCard[] = RAW.map(([ar, fr, en], i) => ({
+export const amriCards: PackCard[] = RAW.map(([ar, fr, en], i) => ({
   productId: AMRI_PRODUCT_ID,
   n: i + 1,
   word: { ar, fr, en },
