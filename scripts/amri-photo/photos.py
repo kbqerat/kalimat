@@ -86,7 +86,7 @@ def main(work):
     for n, dx, angle in [(12, -350, 16), (41, 350, -16), (56, -190, 8), (71, 190, -8)]:
         place(c, front(n), 380, (SIZE / 2 + dx, 620 + abs(dx) * 0.12), angle)
     place(c, front(21), 470, (SIZE / 2, 600))
-    pill(c, "96", (SIZE / 2, 125), RED, 74)
+    pill(c, "100", (SIZE / 2, 125), RED, 74)
     pill(c, "AR  |  FR  |  EN", (SIZE / 2, 1105), BLUE, 46)
     save(c, "cover")
 

@@ -1,7 +1,7 @@
 import type { PackCard } from "./types";
 
 /**
- * Seed for the "Amri — 96 cartes photo" audio pack: the words exactly as
+ * Seed for the "Amri — 100 cartes photo" audio pack: the words exactly as
  * printed on the cards (photo cards, one theme per run of numbers). Same
  * role as amri-cards.ts — loaded by `npm run db:add-amri`, then edited in
  * /admin.
@@ -113,7 +113,7 @@ const RAW: [string, string, string, string, string, "هذا" | "هذه"][] = [
   ["شاحنة خلط الخرسانة", "Bétonnière", "Concrete mixer truck", "une bétonnière", "a concrete mixer truck", "هذه"],
   ["آلة التسوية", "Niveleuse", "Grader", "une niveleuse", "a grader", "هذه"],
   ["شاحنة قلابة", "Camion-benne", "Dump truck", "un camion-benne", "a dump truck", "هذه"],
-  // Nature 86–96
+  // Nature 86–99, 100 is a city
   ["شجرة", "Arbre", "Tree", "un arbre", "a tree", "هذه"],
   ["زهرة", "Fleur", "Flower", "une fleur", "a flower", "هذه"],
   ["شمس", "Soleil", "Sun", "un soleil", "a sun", "هذه"],
@@ -125,6 +125,10 @@ const RAW: [string, string, string, string, string, "هذا" | "هذه"][] = [
   ["جبل", "Montagne", "Mountain", "une montagne", "a mountain", "هذا"],
   ["بحر", "Mer", "Sea", "une mer", "a sea", "هذا"],
   ["نهر", "Rivière", "River", "une rivière", "a river", "هذا"],
+  ["سماء", "Ciel", "Sky", "un ciel", "a sky", "هذه"],
+  ["بحيرة", "Lac", "Lake", "un lac", "a lake", "هذه"],
+  ["غابة", "Forêt", "Forest", "une forêt", "a forest", "هذه"],
+  ["مدينة", "Ville", "City", "une ville", "a city", "هذه"],
 ];
 
 export const amriPhotoCards: PackCard[] = RAW.map(([ar, fr, en, frIs, enIs, arThis], i) => ({

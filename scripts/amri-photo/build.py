@@ -230,7 +230,8 @@ def build(in_dir, work, out_dir, base):
     added = []
     for path in pdfs(in_dir):
         start = pdf_start(path)
-        order = PAGE_ORDER.get(start, range(start, start + 8))
+        # Eight cards a file, but the last (97-100) has four.
+        order = PAGE_ORDER.get(start, range(start, start + len(pymupdf.open(path)) // 2))
         doc = pymupdf.open()
         for n in sorted(order):
             front_1x = cv2.imread(f"{work}/faces/{n:03d}-front.png")

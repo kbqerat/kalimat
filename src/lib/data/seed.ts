@@ -71,9 +71,9 @@ export const seedProducts: Product[] = [
     id: "prd_amri_photo_80",
     slug: "amri-photo-80",
     title: {
-      fr: "Amri · 96 cartes photo arabe – français – anglais",
-      ar: "Amri · 96 بطاقة بالصور عربي – فرنسي – إنجليزي",
-      en: "Amri · 96 photo cards Arabic – French – English",
+      fr: "Amri · 100 cartes photo arabe – français – anglais",
+      ar: "Amri · 100 بطاقة بالصور عربي – فرنسي – إنجليزي",
+      en: "Amri · 100 photo cards Arabic – French – English",
     },
     tagline: {
       fr: "De vraies photos pour apprendre ses premiers mots — et un QR code pour les écouter",
@@ -81,9 +81,9 @@ export const seedProducts: Product[] = [
       en: "Real photos to learn first words — and a QR code to hear them",
     },
     description: {
-      fr: "96 cartes recto verso illustrées de vraies photos : animaux, fruits et aliments, transports, engins de chantier, la maison, les vêtements et la nature. Au recto : la photo et le mot en français, en anglais et en arabe. Au verso : des petites questions (la couleur, où on le trouve, la bonne phrase) pour jouer avec l'enfant.\n\nChaque carte porte un QR code « Écoute » : scannez-le avec un téléphone pour entendre le mot et sa phrase dans les trois langues.",
-      ar: "96 بطاقة على الوجهين بصور حقيقية: الحيوانات، الفواكه والأطعمة، وسائل النقل، آليات البناء، المنزل، الملابس والطبيعة. على الوجه الأمامي: الصورة والكلمة بالفرنسية والإنجليزية والعربية. وعلى الظهر: أسئلة صغيرة (اللون، أين نجده، الجملة الصحيحة) للّعب مع الطفل.\n\nعلى كل بطاقة رمز QR «استمع»: امسحه بالهاتف لسماع الكلمة وجملتها باللغات الثلاث.",
-      en: "96 double-sided cards with real photos: animals, fruit and food, transport, construction machines, the home, clothes and nature. Front: the photo and the word in French, English and Arabic. Back: little questions (its colour, where to find it, the right sentence) to play with your child.\n\nEvery card has a “Listen” QR code: scan it with a phone to hear the word and its sentence in all three languages.",
+      fr: "100 cartes recto verso illustrées de vraies photos : animaux, fruits et aliments, transports, engins de chantier, la maison, les vêtements et la nature. Au recto : la photo et le mot en français, en anglais et en arabe. Au verso : des petites questions (la couleur, où on le trouve, la bonne phrase) pour jouer avec l'enfant.\n\nChaque carte porte un QR code « Écoute » : scannez-le avec un téléphone pour entendre le mot et sa phrase dans les trois langues.",
+      ar: "100 بطاقة على الوجهين بصور حقيقية: الحيوانات، الفواكه والأطعمة، وسائل النقل، آليات البناء، المنزل، الملابس والطبيعة. على الوجه الأمامي: الصورة والكلمة بالفرنسية والإنجليزية والعربية. وعلى الظهر: أسئلة صغيرة (اللون، أين نجده، الجملة الصحيحة) للّعب مع الطفل.\n\nعلى كل بطاقة رمز QR «استمع»: امسحه بالهاتف لسماع الكلمة وجملتها باللغات الثلاث.",
+      en: "100 double-sided cards with real photos: animals, fruit and food, transport, construction machines, the home, clothes and nature. Front: the photo and the word in French, English and Arabic. Back: little questions (its colour, where to find it, the right sentence) to play with your child.\n\nEvery card has a “Listen” QR code: scan it with a phone to hear the word and its sentence in all three languages.",
     },
     type: "pack",
     collectionSlug: "cartes-arabe",
@@ -99,9 +99,9 @@ export const seedProducts: Product[] = [
     ],
     highlights: [
       {
-        fr: "96 cartes recto verso en vraies photos",
-        ar: "96 بطاقة على الوجهين بصور حقيقية",
-        en: "96 double-sided cards with real photos",
+        fr: "100 cartes recto verso en vraies photos",
+        ar: "100 بطاقة على الوجهين بصور حقيقية",
+        en: "100 double-sided cards with real photos",
       },
       {
         fr: "Animaux, aliments, transports, maison, vêtements, nature",
@@ -119,7 +119,7 @@ export const seedProducts: Product[] = [
         en: "Online audio version included (QR code)",
       },
     ],
-    cardCount: 96,
+    cardCount: 100,
     featured: true,
     isActive: true,
     audioEnabled: true,
