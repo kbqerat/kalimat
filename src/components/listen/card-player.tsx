@@ -18,6 +18,7 @@ export interface CardPlayerLabels {
   sentenceTitle: string;
   noSpeech: string;
   noVoice: string;
+  silent: string;
 }
 
 function SpeakButton({
@@ -53,7 +54,7 @@ export function CardPlayer({
   sentence?: Localized;
   labels: CardPlayerLabels;
 }) {
-  const { supported, speaking, speak, missing } = useSpeech();
+  const { supported, speaking, speak, missing, silent } = useSpeech();
   // Skip a language the card has no word for.
   const rows = ROWS.filter(({ locale }) => word[locale]);
   const words: SpeechItem[] = rows.map(({ locale }) => ({
@@ -75,6 +76,9 @@ export function CardPlayer({
 
       {!supported && (
         <p className="text-sm text-riso-orange">{labels.noSpeech}</p>
+      )}
+      {silent && (
+        <p className="whitespace-pre-line text-sm text-riso-orange">{labels.silent}</p>
       )}
       {missing.length > 0 && (
         <p className="text-sm text-ink-soft">

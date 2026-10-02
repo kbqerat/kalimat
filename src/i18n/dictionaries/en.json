@@ -238,6 +238,7 @@
     "allCards": "All cards",
     "noSpeech": "This browser can't play speech. Try Chrome or Safari.",
     "noVoice": "This device has no voice installed for: {langs}.",
+    "silent": "No sound? On Android (Samsung): Settings › General management › Text-to-speech › Preferred engine: “Speech Recognition and Synthesis from Google”, then install the Arabic, French and English voices. Use Chrome and turn the media volume up.",
     "promoTitle": "Don't have the pack yet?",
     "promoBody": "The printed, double-sided cards, with a QR code on every card.",
     "promoCta": "See the pack",

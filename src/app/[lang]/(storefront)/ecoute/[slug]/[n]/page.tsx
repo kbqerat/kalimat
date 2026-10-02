@@ -81,6 +81,7 @@ export default async function ListenCardPage({
             sentenceTitle: dict.listen.sentenceTitle,
             noSpeech: dict.listen.noSpeech,
             noVoice: dict.listen.noVoice,
+            silent: dict.listen.silent,
           }}
         />
       </div>

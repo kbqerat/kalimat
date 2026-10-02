@@ -238,6 +238,7 @@
     "allCards": "Toutes les cartes",
     "noSpeech": "Ce navigateur ne peut pas lire le son. Essayez avec Chrome ou Safari.",
     "noVoice": "Cet appareil n'a pas de voix installée pour : {langs}.",
+    "silent": "Pas de son ? Sur Android (Samsung) : Paramètres › Gestion globale › Synthèse vocale › Moteur préféré : « Services de reconnaissance vocale de Google », puis installez les voix arabe, français et anglais. Utilisez Chrome, et montez le volume média.",
     "promoTitle": "Vous n'avez pas encore le pack ?",
     "promoBody": "Les cartes imprimées, recto verso, avec un QR code sur chaque carte.",
     "promoCta": "Voir le pack",
