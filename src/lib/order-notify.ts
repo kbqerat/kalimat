@@ -44,22 +44,6 @@ export async function notifyNewOrder(ref: string, origin: string): Promise<void>
   }
 }
 
-/**
- * wa.me link to the customer (06… / 07… → 2126… / 2127…) with a ready
- * confirmation message. wa.me itself says so if the number has no WhatsApp.
- */
-function whatsappLink(o: Order): string {
-  const digits = o.phone.replace(/\D/g, "");
-  const intl = digits.startsWith("0") ? `212${digits.slice(1)}` : digits;
-  const items = o.items.map((i) => `${i.qty} × ${i.productTitle}`).join("، ");
-  const message =
-    `السلام عليكم ${o.customerName}، معاكم Kalimat 😊\n` +
-    `توصلنا بالطلب ديالكم ${o.ref}: ${items}.\n` +
-    `المجموع: ${formatMad(o.totalMad, "fr")} (الدفع عند الاستلام).\n` +
-    `واش نأكدو ليكم التوصيل ل ${o.city}؟`;
-  return `https://wa.me/${intl}?text=${encodeURIComponent(message)}`;
-}
-
 const esc = (s: string) =>
   s.replace(
     /[&<>"']/g,
@@ -80,7 +64,7 @@ function text(o: Order, link: string): string {
     `Livraison : ${o.shippingMad ? formatMad(o.shippingMad, "fr") : "gratuite"}`,
     `Total : ${formatMad(o.totalMad, "fr")}`,
     "",
-    `Confirmer sur WhatsApp : ${whatsappLink(o)}`,
+    `Appeler le client : ${o.phone}`,
     `Voir la commande : ${link}`,
   ].join("\n");
 }
@@ -111,8 +95,8 @@ function html(o: Order, link: string): string {
     <tr><td style="padding:2px 0;font-weight:700">Total</td><td style="text-align:right;font-weight:700">${formatMad(o.totalMad, "fr")}</td></tr>
   </table>
   <p style="margin:0 0 8px;color:#6b7280;font-size:13px">2e confirmation avec le client :</p>
-  <a href="${esc(whatsappLink(o))}" style="display:inline-block;background:#25d366;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 24px;border-radius:999px;margin:0 8px 12px 0">Confirmer sur WhatsApp</a>
-  <a href="${esc(link)}" style="display:inline-block;background:#e53935;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 24px;border-radius:999px;margin:0 0 12px">Voir la commande</a>
-  <p style="margin:8px 0 0;color:#6b7280;font-size:13px">Pas de WhatsApp ? Appelle le <a href="tel:${esc(o.phone)}" style="color:#111827;font-weight:700">${esc(o.phone)}</a>.</p>
+  <a href="tel:${esc(o.phone)}" style="display:inline-block;background:#16a34a;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 24px;border-radius:999px">📞 Appeler le client</a>
+  <p style="margin:8px 0 24px;font-size:22px;font-weight:700;letter-spacing:0.5px"><a href="tel:${esc(o.phone)}" style="color:#111827;text-decoration:none">${esc(o.phone)}</a></p>
+  <a href="${esc(link)}" style="display:inline-block;background:#e53935;color:#ffffff;text-decoration:none;font-weight:700;padding:12px 24px;border-radius:999px">Voir la commande</a>
 </div>`;
 }
