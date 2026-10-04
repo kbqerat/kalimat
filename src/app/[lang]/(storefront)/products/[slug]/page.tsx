@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
+import { BuyNowButton } from "@/components/cart/buy-now-button";
 import { ProductGallery } from "@/components/product/product-gallery";
 import { ProductSwiper } from "@/components/product/product-swiper";
 import { Stars } from "@/components/product/stars";
@@ -67,6 +68,14 @@ export default async function ProductPage({
     (p) => p.id !== product.id && !sameCollectionOthers.some((s) => s.id === p.id),
   );
   const related = [...sameCollectionOthers, ...rest].slice(0, 10);
+  const cartItem = {
+    productId: product.id,
+    slug: product.slug,
+    title: product.title,
+    image: product.images[0],
+    priceMad: product.priceMad,
+    stock: product.stock,
+  };
 
   return (
     <article className="mx-auto max-w-6xl px-[var(--page-margin)] py-8">
@@ -136,20 +145,23 @@ export default async function ProductPage({
             )}
 
             <div className="mt-4 lg:mt-5 lg:max-w-sm">
-              <AddToCartButton
-                soldOut={soldOut}
-                labelAdd={dict.product.addToCart}
-                labelAdded={dict.product.added}
-                labelOut={dict.product.outOfStock}
-                item={{
-                  productId: product.id,
-                  slug: product.slug,
-                  title: product.title,
-                  image: product.images[0],
-                  priceMad: product.priceMad,
-                  stock: product.stock,
-                }}
-              />
+              {!soldOut && (
+                <BuyNowButton
+                  label={dict.product.buyNow}
+                  checkoutHref={localeHref(locale, "/checkout")}
+                  item={cartItem}
+                />
+              )}
+              <div className={soldOut ? "" : "mt-2"}>
+                <AddToCartButton
+                  soldOut={soldOut}
+                  tone="ghost"
+                  labelAdd={dict.product.addToCart}
+                  labelAdded={dict.product.added}
+                  labelOut={dict.product.outOfStock}
+                  item={cartItem}
+                />
+              </div>
             </div>
           </div>
 

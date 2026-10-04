@@ -11,6 +11,7 @@ export function AddToCartButton({
   labelOut,
   soldOut = false,
   size = "md",
+  tone = "primary",
 }: {
   item: Omit<CartItem, "qty">;
   labelAdd: string;
@@ -18,6 +19,8 @@ export function AddToCartButton({
   labelOut: string;
   soldOut?: boolean;
   size?: "sm" | "md";
+  /** "ghost" when a stronger button (Buy now) sits next to it. */
+  tone?: "primary" | "ghost";
 }) {
   const { add } = useCart();
   const [justAdded, setJustAdded] = useState(false);
@@ -40,7 +43,7 @@ export function AddToCartButton({
         setJustAdded(true);
         window.setTimeout(() => setJustAdded(false), 1400);
       }}
-      className={cn(base, justAdded ? "btn-brand" : "btn-primary")}
+      className={cn(base, justAdded ? "btn-brand" : tone === "ghost" ? "btn-ghost" : "btn-primary")}
     >
       {justAdded ? `✓ ${labelAdded}` : labelAdd}
     </button>
