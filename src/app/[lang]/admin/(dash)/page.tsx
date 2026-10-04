@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 
 const STATUS_FILTERS: { value: OrderStatus; label: string }[] = [
   { value: "pending", label: "En attente" },
