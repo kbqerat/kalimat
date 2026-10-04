@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { removeProduct } from "@/app/[lang]/admin/(dash)/actions";
+import { ConfirmButton } from "@/components/admin/confirm-button";
 import { Pagination } from "@/components/site/pagination";
 import { getAllProductsForAdmin, getCollections } from "@/lib/data";
 import { formatMad } from "@/lib/format";
@@ -108,12 +109,13 @@ export default async function AdminProductsPage({
                   <form action={removeProduct}>
                     <input type="hidden" name="id" value={p.id} />
                     <input type="hidden" name="lang" value={lang} />
-                    <button
+                    <ConfirmButton
+                      message={`Supprimer définitivement « ${p.title.fr} » ?${p.audioEnabled ? "\nLes QR codes déjà imprimés sur ses cartes ne marcheront plus." : ""}`}
                       className="text-xs text-ink-soft underline hover:text-riso-orange"
                       aria-label={`Supprimer ${p.title.fr}`}
                     >
                       Suppr.
-                    </button>
+                    </ConfirmButton>
                   </form>
                 </td>
               </tr>

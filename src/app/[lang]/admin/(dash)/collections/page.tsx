@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { removeCollection } from "@/app/[lang]/admin/(dash)/actions";
+import { ConfirmButton } from "@/components/admin/confirm-button";
 import { getCollections } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
@@ -63,7 +64,8 @@ export default async function AdminCollectionsPage({
                   <form action={removeCollection}>
                     <input type="hidden" name="slug" value={c.slug} />
                     <input type="hidden" name="lang" value={lang} />
-                    <button
+                    <ConfirmButton
+                      message={`Supprimer la collection « ${c.name.fr} » ?`}
                       disabled={c.count > 0}
                       title={
                         c.count > 0
@@ -74,7 +76,7 @@ export default async function AdminCollectionsPage({
                       aria-label={`Supprimer ${c.name.fr}`}
                     >
                       Suppr.
-                    </button>
+                    </ConfirmButton>
                   </form>
                 </td>
               </tr>
