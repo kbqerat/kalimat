@@ -1,8 +1,11 @@
 "use server";
 
+import { headers } from "next/headers";
+import { after } from "next/server";
 import { z } from "zod";
 import { isValidMoroccanPhone, normalizeMoroccanPhone } from "@/lib/format";
 import { createOrder } from "@/lib/data";
+import { notifyNewOrder } from "@/lib/order-notify";
 
 const schema = z.object({
   customerName: z.string().trim().min(2).max(80),
@@ -62,5 +65,11 @@ export async function submitOrder(raw: unknown): Promise<SubmitOrderResult> {
       error: result.error,
     };
   }
+
+  // Email the owner once the customer has their answer.
+  const h = await headers();
+  const origin = `${h.get("x-forwarded-proto") ?? "https"}://${h.get("host")}`;
+  after(() => notifyNewOrder(result.ref, origin));
+
   return { ok: true, ref: result.ref };
 }

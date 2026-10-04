@@ -3,12 +3,13 @@
 import { useActionState } from "react";
 import { login, type LoginState } from "@/app/[lang]/admin/login/actions";
 
-export function AdminLoginForm({ lang }: { lang: string }) {
+export function AdminLoginForm({ lang, next }: { lang: string; next: string }) {
   const [state, formAction, pending] = useActionState<LoginState, FormData>(login, {});
 
   return (
     <form action={formAction} className="space-y-4">
       <input type="hidden" name="lang" value={lang} />
+      <input type="hidden" name="next" value={next} />
       <label className="block">
         <span className="font-mono text-[11px] uppercase tracking-widest text-ink-soft">
           Mot de passe

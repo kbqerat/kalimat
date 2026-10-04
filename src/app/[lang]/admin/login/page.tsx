@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { AdminLoginForm } from "@/components/admin/login-form";
-import { isAdmin } from "@/lib/admin-auth";
+import { isAdmin, safeNext } from "@/lib/admin-auth";
 import { safeLocale } from "@/i18n/config";
 import { getSettings } from "@/lib/data";
 
@@ -9,11 +9,15 @@ export const metadata: Metadata = { title: "Admin", robots: { index: false } };
 
 export default async function AdminLoginPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ lang: string }>;
+  searchParams: Promise<{ next?: string }>;
 }) {
   const { lang } = await params;
-  if (await isAdmin()) redirect(`/${safeLocale(lang)}/admin`);
+  // `?next=` comes from links such as the new-order email.
+  const next = safeNext((await searchParams).next, safeLocale(lang));
+  if (await isAdmin()) redirect(next);
   const settings = await getSettings();
 
   return (
@@ -30,7 +34,7 @@ export default async function AdminLoginPage({
             Espace réservé à la gestion des jeux et des commandes.
           </p>
           <div className="mt-6">
-            <AdminLoginForm lang={lang} />
+            <AdminLoginForm lang={lang} next={next} />
           </div>
         </div>
       </div>

@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { ADMIN_COOKIE, checkPassword, issueToken } from "@/lib/admin-auth";
+import { ADMIN_COOKIE, checkPassword, issueToken, safeNext } from "@/lib/admin-auth";
 import { safeLocale } from "@/i18n/config";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 
@@ -38,7 +38,7 @@ export async function login(
     secure: process.env.NODE_ENV === "production",
   });
 
-  redirect(`/${lang}/admin`);
+  redirect(safeNext(formData.get("next"), lang));
 }
 
 export async function logout(formData: FormData) {

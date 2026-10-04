@@ -75,3 +75,9 @@ export async function isAdmin(): Promise<boolean> {
 export async function requireAdmin(lang: string): Promise<void> {
   if (!(await isAdmin())) redirect(`/${safeLocale(lang)}/admin/login`);
 }
+
+/** Where to go after logging in: an admin path from `?next=`, else the dashboard. */
+export function safeNext(raw: unknown, lang: string): string {
+  const next = typeof raw === "string" ? raw : "";
+  return /^\/(fr|ar|en)\/admin(\/[\w\-/]*)?$/.test(next) ? next : `/${lang}/admin`;
+}
