@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DeleteOrderButton } from "@/components/admin/delete-order-button";
 import { StatusSelect } from "@/components/admin/status-select";
 import { Pagination } from "@/components/site/pagination";
 import { listOrders } from "@/lib/data";
@@ -114,6 +115,7 @@ export default async function AdminOrdersPage({
                 <th className="p-2 text-start">Ville</th>
                 <th className="p-2 text-end">Total</th>
                 <th className="p-2 text-start">Statut</th>
+                <th className="p-2" />
               </tr>
             </thead>
             <tbody>
@@ -146,6 +148,9 @@ export default async function AdminOrdersPage({
                   </td>
                   <td className="p-2">
                     <StatusSelect refCode={o.ref} lang={lang} value={o.status} />
+                  </td>
+                  <td className="p-2 text-end">
+                    <DeleteOrderButton refCode={o.ref} lang={lang} compact />
                   </td>
                 </tr>
               ))}

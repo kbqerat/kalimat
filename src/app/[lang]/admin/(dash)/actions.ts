@@ -1,12 +1,14 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { isAdmin } from "@/lib/admin-auth";
 import { locales, safeLocale } from "@/i18n/config";
 import {
   addProductImages,
   deleteCollection,
+  deleteOrder,
   deletePackCard,
   deleteProduct,
   getAllProductsForAdmin,
@@ -44,6 +46,18 @@ export async function updateOrderStatus(formData: FormData): Promise<void> {
   await setOrderStatus(ref, status);
   revalidatePath(`/${lang}/admin`);
   revalidatePath(`/${lang}/admin/orders/${ref}`);
+}
+
+export async function deleteOrderAction(formData: FormData): Promise<void> {
+  if (!(await isAdmin())) throw new Error("Unauthorized");
+  const ref = String(formData.get("ref") ?? "");
+  const lang = safeLocale(formData.get("lang"));
+  if (!ref) return;
+  await deleteOrder(ref);
+  revalidatePath(`/${lang}/admin`);
+  // Stock went back up: refresh the shop pages too.
+  for (const l of locales) revalidatePath(`/${l}`, "layout");
+  if (formData.get("back")) redirect(`/${lang}/admin`);
 }
 
 /* ------------------------------ products ------------------------------- */

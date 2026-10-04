@@ -432,6 +432,41 @@ export async function setOrderStatus(ref: string, status: OrderStatus): Promise<
   return true;
 }
 
+/**
+ * Deletes an order (its items go with it) and puts its quantities back in
+ * stock — placing an order took them out, cancelling doesn't return them.
+ */
+export async function deleteOrder(ref: string): Promise<boolean> {
+  const order = await getOrderByRef(ref);
+  if (!order) return false;
+
+  if (USING_SUPABASE) {
+    const { error } = await supabaseAdmin.from("orders").delete().eq("id", order.id);
+    if (error) throw error;
+    for (const item of order.items) {
+      const { data: product } = await supabaseAdmin
+        .from("products")
+        .select("stock")
+        .eq("id", item.productId)
+        .maybeSingle();
+      if (!product) continue; // product deleted since
+      const { error: stockError } = await supabaseAdmin
+        .from("products")
+        .update({ stock: product.stock + item.qty })
+        .eq("id", item.productId);
+      if (stockError) throw stockError;
+    }
+    return true;
+  }
+
+  mockOrders.delete(order.ref);
+  for (const item of order.items) {
+    const product = seedProducts.find((p) => p.id === item.productId);
+    if (product) product.stock += item.qty;
+  }
+  return true;
+}
+
 /* ---------------------------- admin: products --------------------------- */
 
 export async function getAllProductsForAdmin(): Promise<Product[]> {

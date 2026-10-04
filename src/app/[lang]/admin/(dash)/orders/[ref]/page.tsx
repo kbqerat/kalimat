@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { DeleteOrderButton } from "@/components/admin/delete-order-button";
 import { StatusSelect } from "@/components/admin/status-select";
 import { getOrderByRef } from "@/lib/data";
 import { formatMad } from "@/lib/format";
@@ -26,7 +27,10 @@ export default async function AdminOrderDetail({
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
         <h1 className="font-display text-3xl uppercase tracking-tight">{order.ref}</h1>
-        <StatusSelect refCode={order.ref} lang={lang} value={order.status} />
+        <div className="flex items-center gap-2">
+          <StatusSelect refCode={order.ref} lang={lang} value={order.status} />
+          <DeleteOrderButton refCode={order.ref} lang={lang} back />
+        </div>
       </div>
 
       <p className="mt-1 font-mono text-xs uppercase tracking-widest text-ink-soft">
