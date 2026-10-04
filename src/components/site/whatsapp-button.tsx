@@ -1,3 +1,10 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+
+/** Listen pages (reached by scanning a card's QR code) stay free of it. */
+const HIDDEN_ON = /\/ecoute(\/|$)/;
+
 export function WhatsappButton({
   label,
   whatsappNumber,
@@ -5,6 +12,9 @@ export function WhatsappButton({
   label: string;
   whatsappNumber: string;
 }) {
+  const pathname = usePathname() ?? "";
+  if (HIDDEN_ON.test(pathname)) return null;
+
   return (
     <a
       href={`https://wa.me/${whatsappNumber}`}
