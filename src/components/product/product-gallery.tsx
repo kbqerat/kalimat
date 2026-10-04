@@ -26,7 +26,8 @@ export function ProductGallery({
 
   return (
     <div>
-      <div className="card relative aspect-square overflow-hidden">
+      {/* Photos keep their own proportions — never cropped — inside a simple frame. */}
+      <div className={cn("card relative overflow-hidden", has ? "p-2" : "aspect-square")}>
         {has ? (
           images.map((src, i) => (
             <img
@@ -34,7 +35,7 @@ export function ProductGallery({
               src={src}
               alt={`${alt} — ${i + 1}`}
               className={cn(
-                "absolute inset-0 h-full w-full object-cover",
+                "block h-auto w-full rounded-lg border border-line",
                 i === index ? "" : "hidden",
               )}
             />

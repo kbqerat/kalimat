@@ -93,9 +93,16 @@ export const seedProducts: Product[] = [
     ratingCount: 0,
     salesCount: 0,
     images: [
-      "/pack/amri-photo/photos/cover.webp",
-      "/pack/amri-photo/photos/recto-verso.webp",
-      "/pack/amri-photo/photos/themes.webp",
+      "/pack/amri-photo/slides/01.webp",
+      "/pack/amri-photo/slides/02.webp",
+      "/pack/amri-photo/slides/03.webp",
+      "/pack/amri-photo/slides/04.webp",
+      "/pack/amri-photo/slides/05.webp",
+      "/pack/amri-photo/slides/06.webp",
+      "/pack/amri-photo/slides/07.webp",
+      "/pack/amri-photo/slides/08.webp",
+      "/pack/amri-photo/slides/09.webp",
+      "/pack/amri-photo/slides/10.webp",
     ],
     highlights: [
       {
