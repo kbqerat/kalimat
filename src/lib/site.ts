@@ -15,9 +15,9 @@ export const CONTACT_CITY = "Oujda, Maroc";
 export const CONTACT_COORDS = { lat: 34.6814, lon: -1.9086 };
 
 /** Seed defaults for `settings` — editable from /admin/settings once Supabase is connected. */
-export const CONTACT_PHONE = "+212 6 00 00 00 00";
+export const CONTACT_PHONE = "0782-644852";
 export const CONTACT_EMAIL = "Medamri4848@gmail.com";
-export const WHATSAPP_NUMBER = "212600029060";
+export const WHATSAPP_NUMBER = "212782644852";
 export const SHIPPING_FLAT_MAD = 25;
 export const FREE_SHIPPING_THRESHOLD_MAD = 180;
 
