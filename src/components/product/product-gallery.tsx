@@ -1,7 +1,7 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element */
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { ProductType } from "@/lib/data/types";
 import { PRODUCT_PLACEHOLDER } from "@/lib/product-visuals";
 import { cn } from "@/lib/utils";
@@ -23,11 +23,27 @@ export function ProductGallery({
   const count = images.length;
   const has = count > 0;
   const step = (n: number) => setIndex((p) => (p + n + count) % count);
+  const touchX = useRef<number | null>(null);
+
+  // Swipe between photos on touch screens.
+  const onTouchEnd = (e: React.TouchEvent) => {
+    const start = touchX.current;
+    touchX.current = null;
+    if (start === null || count < 2) return;
+    const dx = e.changedTouches[0].clientX - start;
+    if (Math.abs(dx) < 40) return;
+    const rtl = getComputedStyle(e.currentTarget).direction === "rtl";
+    step(dx < 0 !== rtl ? 1 : -1);
+  };
 
   return (
     <div>
       {/* Photos keep their own proportions — never cropped — inside a simple frame. */}
-      <div className={cn("card relative overflow-hidden", has ? "p-2" : "aspect-square")}>
+      <div
+        className={cn("card relative overflow-hidden", has ? "p-2" : "aspect-square")}
+        onTouchStart={(e) => (touchX.current = e.touches[0].clientX)}
+        onTouchEnd={onTouchEnd}
+      >
         {has ? (
           images.map((src, i) => (
             <img
@@ -76,7 +92,8 @@ export function ProductGallery({
       </div>
 
       {count > 1 && (
-        <div className="mt-3 flex flex-wrap gap-2">
+        // Thumbnails only on larger screens: on phones they'd push "add to cart" down.
+        <div className="mt-3 hidden flex-wrap gap-2 lg:flex">
           {images.map((src, i) => (
             <button
               key={src}

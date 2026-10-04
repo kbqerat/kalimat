@@ -77,7 +77,7 @@ export default async function ProductPage({
         ← {dict.product.backToProducts}
       </Link>
 
-      <div className="mt-5 grid gap-8 lg:grid-cols-[1fr_1fr]">
+      <div className="mt-5 grid gap-5 lg:grid-cols-[1fr_1fr] lg:gap-8">
         <ProductGallery
           images={product.images}
           alt={product.title[locale]}
@@ -85,103 +85,105 @@ export default async function ProductPage({
           badge={save > 0 ? `−${formatMad(save, locale)}` : undefined}
         />
 
-        <div>
-          {collection && (
-            <div className="flex flex-wrap gap-2">
-              <Link
-                href={localeHref(locale, `/collections/${collection.slug}`)}
-                className="tag"
-              >
-                {collection.name[locale]}
-              </Link>
-            </div>
-          )}
-
-          <h1 className="mt-3 font-display text-2xl leading-tight sm:text-3xl">
-            {product.title[locale]}
-          </h1>
-          <p className="mt-2 text-ink-soft">{product.tagline[locale]}</p>
-
-          <div className="mt-3 flex items-center gap-2 text-sm text-ink-soft">
-            <Stars value={product.rating} size={16} />
-            <span className="font-semibold text-ink">{product.rating.toFixed(2)}</span>
-            <span>·</span>
-            <span>+{t(dict.product.sold, { count: product.salesCount })}</span>
-            <span>·</span>
-            <span>{t(dict.product.reviews, { count: product.ratingCount })}</span>
-          </div>
-
-          <div className="mt-4 flex items-end gap-3">
-            <span className="text-3xl font-extrabold text-riso-orange">
-              {formatMad(product.priceMad, locale)}
-            </span>
-            {product.compareAtMad && (
-              <span className="pb-1 text-lg text-ink-soft line-through">
-                {formatMad(product.compareAtMad, locale)}
-              </span>
-            )}
-            {save > 0 && (
-              <span className="badge-sale mb-1.5">
-                {t(dict.product.save, { amount: formatMad(save, locale) })}
-              </span>
-            )}
-          </div>
-
-          {low && (
-            <p className="mt-2 text-sm font-semibold text-riso-orange">
-              {t(dict.product.lowStock, { count: product.stock })}
-            </p>
-          )}
-
-          <div className="mt-5 max-w-sm">
-            <AddToCartButton
-              soldOut={soldOut}
-              labelAdd={dict.product.addToCart}
-              labelAdded={dict.product.added}
-              labelOut={dict.product.outOfStock}
-              item={{
-                productId: product.id,
-                slug: product.slug,
-                title: product.title,
-                image: product.images[0],
-                priceMad: product.priceMad,
-                stock: product.stock,
-              }}
-            />
-          </div>
-
-          <div className="mt-5 grid gap-2 sm:grid-cols-3">
-            {[
-              [dict.trust.shippingTitle, dict.trust.shippingSub, "🚚"],
-              [dict.trust.codTitle, dict.trust.codSub, "🔒"],
-              [dict.trust.reviewsTitle, dict.trust.reviewsSub, "⭐"],
-            ].map(([title, sub, icon]) => (
-              <div
-                key={title}
-                className="rounded-xl border border-line bg-paper p-3 text-center"
-              >
-                <div className="text-lg">{icon}</div>
-                <div className="mt-1 text-xs font-bold">{title}</div>
-                <div className="text-[11px] text-ink-soft">{sub}</div>
+        {/* On phones (where ad traffic lands) the price and "add to cart" come
+            straight after the photos; the title and details follow. */}
+        <div className="flex flex-col">
+          <div className="order-2 mt-6 lg:order-1 lg:mt-0">
+            {collection && (
+              <div className="flex flex-wrap gap-2">
+                <Link href={localeHref(locale, `/collections/${collection.slug}`)} className="tag">
+                  {collection.name[locale]}
+                </Link>
               </div>
-            ))}
+            )}
+
+            <h1 className="mt-3 font-display text-2xl leading-tight sm:text-3xl">
+              {product.title[locale]}
+            </h1>
+            <p className="mt-2 text-ink-soft">{product.tagline[locale]}</p>
+
+            <div className="mt-3 flex items-center gap-2 text-sm text-ink-soft">
+              <Stars value={product.rating} size={16} />
+              <span className="font-semibold text-ink">{product.rating.toFixed(2)}</span>
+              <span>·</span>
+              <span>+{t(dict.product.sold, { count: product.salesCount })}</span>
+              <span>·</span>
+              <span>{t(dict.product.reviews, { count: product.ratingCount })}</span>
+            </div>
           </div>
 
-          {product.highlights.length > 0 && (
-            <div className="mt-6">
-              <h2 className="text-xs font-bold uppercase tracking-wide text-ink-soft">
-                {dict.product.highlights}
-              </h2>
-              <ul className="mt-2 space-y-1.5 text-sm">
-                {product.highlights.map((h, i) => (
-                  <li key={i} className="flex gap-2">
-                    <span className="text-riso-teal">✓</span>
-                    <span>{h[locale]}</span>
-                  </li>
-                ))}
-              </ul>
+          <div className="order-1 lg:order-2">
+            <div className="flex items-end gap-3 lg:mt-4">
+              <span className="text-3xl font-extrabold text-riso-orange">
+                {formatMad(product.priceMad, locale)}
+              </span>
+              {product.compareAtMad && (
+                <span className="pb-1 text-lg text-ink-soft line-through">
+                  {formatMad(product.compareAtMad, locale)}
+                </span>
+              )}
+              {save > 0 && (
+                <span className="badge-sale mb-1.5">
+                  {t(dict.product.save, { amount: formatMad(save, locale) })}
+                </span>
+              )}
             </div>
-          )}
+
+            {low && (
+              <p className="mt-2 text-sm font-semibold text-riso-orange">
+                {t(dict.product.lowStock, { count: product.stock })}
+              </p>
+            )}
+
+            <div className="mt-4 lg:mt-5 lg:max-w-sm">
+              <AddToCartButton
+                soldOut={soldOut}
+                labelAdd={dict.product.addToCart}
+                labelAdded={dict.product.added}
+                labelOut={dict.product.outOfStock}
+                item={{
+                  productId: product.id,
+                  slug: product.slug,
+                  title: product.title,
+                  image: product.images[0],
+                  priceMad: product.priceMad,
+                  stock: product.stock,
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="order-3">
+            <div className="mt-5 grid gap-2 sm:grid-cols-3">
+              {[
+                [dict.trust.shippingTitle, dict.trust.shippingSub, "🚚"],
+                [dict.trust.codTitle, dict.trust.codSub, "🔒"],
+                [dict.trust.reviewsTitle, dict.trust.reviewsSub, "⭐"],
+              ].map(([title, sub, icon]) => (
+                <div key={title} className="rounded-xl border border-line bg-paper p-3 text-center">
+                  <div className="text-lg">{icon}</div>
+                  <div className="mt-1 text-xs font-bold">{title}</div>
+                  <div className="text-[11px] text-ink-soft">{sub}</div>
+                </div>
+              ))}
+            </div>
+
+            {product.highlights.length > 0 && (
+              <div className="mt-6">
+                <h2 className="text-xs font-bold uppercase tracking-wide text-ink-soft">
+                  {dict.product.highlights}
+                </h2>
+                <ul className="mt-2 space-y-1.5 text-sm">
+                  {product.highlights.map((h, i) => (
+                    <li key={i} className="flex gap-2">
+                      <span className="text-riso-teal">✓</span>
+                      <span>{h[locale]}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
