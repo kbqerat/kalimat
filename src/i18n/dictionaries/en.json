@@ -90,6 +90,7 @@
   },
   "product": {
     "buyNow": "Buy now",
+    "buyNowShort": "Buy now",
     "addToCart": "Add to cart",
     "added": "Added",
     "outOfStock": "Out of stock",

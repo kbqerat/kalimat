@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
+import { BuyNowButton } from "@/components/cart/buy-now-button";
 import { Stars } from "@/components/product/stars";
 import type { CollectionWithCount } from "@/lib/data";
 import type { Locale } from "@/i18n/config";
@@ -30,6 +31,14 @@ export function ProductCard({
   const primaryCollection = collections.find((c) => c.slug === product.collectionSlug);
   const cover = product.images[0];
   const placeholder = PRODUCT_PLACEHOLDER[product.type];
+  const cartItem = {
+    productId: product.id,
+    slug: product.slug,
+    title: product.title,
+    image: cover,
+    priceMad: product.priceMad,
+    stock: product.stock,
+  };
 
   return (
     <div className="card flex h-full flex-col overflow-hidden">
@@ -98,21 +107,26 @@ export function ProductCard({
           </p>
         )}
 
-        <div className="mt-auto pt-2">
+        <div className="mt-auto flex gap-1.5 pt-2">
+          {!soldOut && (
+            <BuyNowButton
+              size="sm"
+              label={dict.product.buyNowShort}
+              checkoutHref={localeHref(locale, "/checkout")}
+              item={cartItem}
+              className="basis-[70%] !px-2"
+            />
+          )}
           <AddToCartButton
             size="sm"
+            tone="ghost"
+            icon={soldOut ? undefined : "always"}
             soldOut={soldOut}
             labelAdd={dict.product.addToCart}
             labelAdded={dict.product.added}
             labelOut={dict.product.outOfStock}
-            item={{
-              productId: product.id,
-              slug: product.slug,
-              title: product.title,
-              image: cover,
-              priceMad: product.priceMad,
-              stock: product.stock,
-            }}
+            item={cartItem}
+            className={soldOut ? "" : "basis-[30%]"}
           />
         </div>
       </div>

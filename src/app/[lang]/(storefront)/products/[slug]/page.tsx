@@ -144,24 +144,26 @@ export default async function ProductPage({
               </p>
             )}
 
-            <div className="mt-4 lg:mt-5 lg:max-w-sm">
+            {/* Phones: Buy now 70% | cart icon 30%. Desktop: stacked, with labels. */}
+            <div className="mt-4 flex gap-2 lg:mt-5 lg:max-w-sm lg:flex-col">
               {!soldOut && (
                 <BuyNowButton
                   label={dict.product.buyNow}
                   checkoutHref={localeHref(locale, "/checkout")}
                   item={cartItem}
+                  className="basis-[70%] lg:basis-auto"
                 />
               )}
-              <div className={soldOut ? "" : "mt-2"}>
-                <AddToCartButton
-                  soldOut={soldOut}
-                  tone="ghost"
-                  labelAdd={dict.product.addToCart}
-                  labelAdded={dict.product.added}
-                  labelOut={dict.product.outOfStock}
-                  item={cartItem}
-                />
-              </div>
+              <AddToCartButton
+                soldOut={soldOut}
+                tone="ghost"
+                icon={soldOut ? undefined : "mobile"}
+                labelAdd={dict.product.addToCart}
+                labelAdded={dict.product.added}
+                labelOut={dict.product.outOfStock}
+                item={cartItem}
+                className={soldOut ? "" : "basis-[30%] lg:basis-auto"}
+              />
             </div>
           </div>
 

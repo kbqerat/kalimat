@@ -90,6 +90,7 @@
   },
   "product": {
     "buyNow": "اطلب الآن",
+    "buyNowShort": "اطلب الآن",
     "addToCart": "أضف إلى السلة",
     "added": "أُضيف",
     "outOfStock": "نفدت الكمية",

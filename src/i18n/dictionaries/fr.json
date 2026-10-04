@@ -90,6 +90,7 @@
   },
   "product": {
     "buyNow": "Acheter maintenant",
+    "buyNowShort": "Acheter",
     "addToCart": "Ajouter au panier",
     "added": "Ajouté",
     "outOfStock": "Rupture de stock",
