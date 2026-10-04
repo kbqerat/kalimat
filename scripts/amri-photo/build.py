@@ -47,6 +47,10 @@ CARD = pymupdf.Rect(14.1732, 0, 269.2913, 340.1575)
 # AMRI_cards_65_to_72 has 67 printed after 70; its pages hold, in order:
 PAGE_ORDER = {65: [65, 66, 68, 69, 70, 67, 71, 72]}
 
+# IN_DIR/<this>/<n>.png replaces card n of the PDFs: the print repeated
+# some words (8 was 2's dog, 51/53/54 were 46-48), redrawn as new cards.
+REPLACED = "remplacements"
+
 # QR holes find_qr() can't see: card 2's frame is open at the side.
 QR_HOLES = {2: (419, 201, 304, 319)}
 
@@ -105,6 +109,13 @@ def extract_faces(in_dir, work):
             faces[2 * i].save(f"{out}/{n:03d}-front.png")
             faces[2 * i + 1].save(f"{out}/{n:03d}-back.png")
         print(f"{os.path.basename(path)}: cards {list(order)}")
+    # Redesigned cards, front|back renders like the 1-8 file's pages.
+    for path in sorted(glob.glob(os.path.join(in_dir, REPLACED, "*.png"))):
+        n = int(os.path.splitext(os.path.basename(path))[0])
+        front, back = split_pair(Image.open(path).convert("RGB"))
+        front.save(f"{out}/{n:03d}-front.png")
+        back.save(f"{out}/{n:03d}-back.png")
+        print(f"{REPLACED}/{os.path.basename(path)}: card {n}")
 
 
 def find_qr(front):
@@ -231,7 +242,10 @@ def build(in_dir, work, out_dir, base):
     for path in pdfs(in_dir):
         start = pdf_start(path)
         # Eight cards a file, but the last (97-100) has four.
-        order = PAGE_ORDER.get(start, range(start, start + len(pymupdf.open(path)) // 2))
+        src = pymupdf.open(path)
+        ((xref, *_),) = src[0].get_images(full=True)
+        paired = src.extract_image(xref)["width"] == 2 * W  # front|back a page
+        order = PAGE_ORDER.get(start, range(start, start + len(src) // (1 if paired else 2)))
         doc = pymupdf.open()
         for n in sorted(order):
             front_1x = cv2.imread(f"{work}/faces/{n:03d}-front.png")

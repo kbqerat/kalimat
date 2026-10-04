@@ -19,7 +19,8 @@ export const AMRI_PHOTO_PRODUCT_ID = "prd_amri_photo_80";
 
 // Card n is index n - 1: [ar, fr, en, then the back's sentence parts —
 // "C'est <fr>." / "This is <en>." / "<ar demonstrative> <ar>."].
-// Some words come twice: the print run repeats them under two numbers.
+// Some words come twice: the print run repeats them under two numbers
+// (8, 51, 53 and 54 were redrawn with new words).
 const RAW: [string, string, string, string, string, "هذا" | "هذه"][] = [
   // Animaux 1–20 (9 is a car in the print)
   ["قطة", "Chat", "Cat", "un chat", "a cat", "هذه"],
@@ -29,7 +30,7 @@ const RAW: [string, string, string, string, string, "هذا" | "هذه"][] = [
   ["فيل", "Éléphant", "Elephant", "un éléphant", "an elephant", "هذا"],
   ["زرافة", "Girafe", "Giraffe", "une girafe", "a giraffe", "هذه"],
   ["حصان", "Cheval", "Horse", "un cheval", "a horse", "هذا"],
-  ["كلب", "Chien", "Dog", "un chien", "a dog", "هذا"],
+  ["قرد", "Singe", "Monkey", "un singe", "a monkey", "هذا"],
   ["سيارة", "Voiture", "Car", "une voiture", "a car", "هذه"],
   ["خروف", "Mouton", "Sheep", "un mouton", "a sheep", "هذا"],
   ["ماعز", "Chèvre", "Goat", "une chèvre", "a goat", "هذا"],
@@ -74,10 +75,10 @@ const RAW: [string, string, string, string, string, "هذا" | "هذه"][] = [
   ["سفينة", "Bateau", "Boat", "un bateau", "a boat", "هذه"],
   ["سيارة إسعاف", "Ambulance", "Ambulance", "une ambulance", "an ambulance", "هذه"],
   ["سيارة الشرطة", "Voiture de police", "Police car", "une voiture de police", "a police car", "هذه"],
-  ["قطار", "Train", "Train", "un train", "a train", "هذا"],
+  ["سيارة أجرة", "Voiture de taxi", "Taxi", "une voiture de taxi", "a taxi", "هذه"],
   ["مروحية", "Hélicoptère", "Helicopter", "un hélicoptère", "a helicopter", "هذه"],
-  ["طائرة", "Avion", "Airplane", "un avion", "an airplane", "هذه"],
-  ["سفينة", "Bateau", "Ship", "un bateau", "a ship", "هذه"],
+  ["مترو", "Métro", "Subway", "un métro", "a subway", "هذا"],
+  ["طفل", "Enfant", "Child", "un enfant", "a child", "هذا"],
   ["منطاد الهواء الساخن", "Montgolfière", "Hot air balloon", "une montgolfière", "a hot air balloon", "هذا"],
   // La maison 56–70
   ["منزل", "Maison", "House", "une maison", "a house", "هذا"],
