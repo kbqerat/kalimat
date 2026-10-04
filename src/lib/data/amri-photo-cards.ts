@@ -18,10 +18,11 @@ export const AMRI_PHOTO_PRODUCT_SLUG = "amri-photo-80";
 export const AMRI_PHOTO_PRODUCT_ID = "prd_amri_photo_80";
 
 // Card n is index n - 1: [ar, fr, en, then the back's sentence parts —
-// "C'est <fr>." / "This is <en>." / "<ar demonstrative> <ar>."].
-// Some words come twice: the print run repeats them under two numbers
-// (8, 51, 53 and 54 were redrawn with new words).
-const RAW: [string, string, string, string, string, "هذا" | "هذه"][] = [
+// "C'est <fr>." / "This is <en>." / "<ar demonstrative> <ar>.", the Arabic
+// word in the sentence when it differs (أمي, "my mother")].
+// The print repeated some words under two numbers; 8, 41, 51, 53, 54 and
+// 59 were redrawn with new words.
+const RAW: [string, string, string, string, string, "هذا" | "هذه", string?][] = [
   // Animaux 1–20 (9 is a car in the print)
   ["قطة", "Chat", "Cat", "un chat", "a cat", "هذه"],
   ["كلب", "Chien", "Dog", "un chien", "a dog", "هذا"],
@@ -64,8 +65,8 @@ const RAW: [string, string, string, string, string, "هذا" | "هذه"][] = [
   ["ماء", "Eau", "Water", "de l'eau", "water", "هذا"],
   ["بيتزا", "Pizza", "Pizza", "une pizza", "a pizza", "هذه"],
   ["كعكة", "Gâteau", "Cake", "un gâteau", "a cake", "هذه"],
-  // Transports 41–55
-  ["سيارة", "Voiture", "Car", "une voiture", "a car", "هذه"],
+  // Transports 41–55 (41 is the mother, 54 a child)
+  ["الأم", "Mère", "Mother", "ma mère", "my mother", "هذه", "أمي"],
   ["حافلة", "Bus", "Bus", "un bus", "a bus", "هذه"],
   ["شاحنة", "Camion", "Truck", "un camion", "a truck", "هذه"],
   ["دراجة", "Vélo", "Bicycle", "un vélo", "a bicycle", "هذه"],
@@ -80,11 +81,11 @@ const RAW: [string, string, string, string, string, "هذا" | "هذه"][] = [
   ["مترو", "Métro", "Subway", "un métro", "a subway", "هذا"],
   ["طفل", "Enfant", "Child", "un enfant", "a child", "هذا"],
   ["منطاد الهواء الساخن", "Montgolfière", "Hot air balloon", "une montgolfière", "a hot air balloon", "هذا"],
-  // La maison 56–70
+  // La maison 56–70 (59 is the father)
   ["منزل", "Maison", "House", "une maison", "a house", "هذا"],
   ["باب", "Porte", "Door", "une porte", "a door", "هذا"],
   ["نافذة", "Fenêtre", "Window", "une fenêtre", "a window", "هذه"],
-  ["كرسي", "Chaise", "Chair", "une chaise", "a chair", "هذا"],
+  ["الأب", "Père", "Father", "mon père", "my father", "هذا", "أبي"],
   ["طاولة", "Table", "Table", "une table", "a table", "هذه"],
   ["سرير", "Lit", "Bed", "un lit", "a bed", "هذا"],
   ["أريكة", "Canapé", "Sofa", "un canapé", "a sofa", "هذه"],
@@ -132,10 +133,10 @@ const RAW: [string, string, string, string, string, "هذا" | "هذه"][] = [
   ["مدينة", "Ville", "City", "une ville", "a city", "هذه"],
 ];
 
-export const amriPhotoCards: PackCard[] = RAW.map(([ar, fr, en, frIs, enIs, arThis], i) => ({
+export const amriPhotoCards: PackCard[] = RAW.map(([ar, fr, en, frIs, enIs, arThis, arIs = ar], i) => ({
   productId: AMRI_PHOTO_PRODUCT_ID,
   n: i + 1,
   word: { ar, fr, en },
-  sentence: { fr: `C'est ${frIs}.`, en: `This is ${enIs}.`, ar: `${arThis} ${ar}.` },
+  sentence: { fr: `C'est ${frIs}.`, en: `This is ${enIs}.`, ar: `${arThis} ${arIs}.` },
   image: `/pack/amri-photo/cards/${String(i + 1).padStart(3, "0")}.webp`,
 }));
