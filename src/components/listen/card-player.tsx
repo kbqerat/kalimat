@@ -45,22 +45,28 @@ function SpeakButton({
   );
 }
 
+/** Clip URLs per language, from `audioUrl` (src/lib/audio.ts). */
+export type CardAudio = { word: Partial<Localized>; sentence?: Partial<Localized> };
+
 export function CardPlayer({
   word,
   sentence,
+  audio,
   labels,
 }: {
   word: Localized;
   sentence?: Localized;
+  audio: CardAudio;
   labels: CardPlayerLabels;
 }) {
-  const { supported, speaking, speak, missing, silent } = useSpeech();
+  const { unsupported, speaking, speak, missing, silent } = useSpeech();
   // Skip a language the card has no word for.
   const rows = ROWS.filter(({ locale }) => word[locale]);
   const words: SpeechItem[] = rows.map(({ locale }) => ({
     key: `word-${locale}`,
     text: word[locale],
     locale,
+    src: audio.word[locale],
   }));
 
   return (
@@ -68,13 +74,12 @@ export function CardPlayer({
       <button
         type="button"
         onClick={() => speak(words)}
-        disabled={!supported}
         className="btn btn-primary w-full !py-4 text-lg"
       >
         🔊 {labels.listenAll}
       </button>
 
-      {!supported && (
+      {unsupported && (
         <p className="text-sm text-riso-orange">{labels.noSpeech}</p>
       )}
       {silent && (
@@ -141,7 +146,9 @@ export function CardPlayer({
                     active={speaking === key}
                     label={`${labels.listen} — ${localeNames[locale]}`}
                     onClick={() =>
-                      speak([{ key, text: sentence[locale], locale }])
+                      speak([
+                        { key, text: sentence[locale], locale, src: audio.sentence?.[locale] },
+                      ])
                     }
                   />
                 </li>

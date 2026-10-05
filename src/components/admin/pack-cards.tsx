@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  generatePackAudio,
   importPackCards,
   removePackCard,
   uploadPackCardImages,
@@ -51,6 +52,96 @@ export function PackCardsImport({ lang, productId }: { lang: string; productId: 
         {pending ? "…" : "Importer"}
       </button>
     </form>
+  );
+}
+
+// Azure's free tier: one clip every ~3 s (SPACING_MS in src/lib/audio.ts).
+const AUDIO_PAUSE_MS = 3100;
+
+/**
+ * Generates the pack's missing MP3s a few at a time, until none is left.
+ * Clips are named after their text, so after editing a word only the new
+ * clips are missing.
+ */
+export function PackAudioGenerate({
+  productId,
+  total,
+  missing: initialMissing,
+}: {
+  productId: string;
+  total: number;
+  missing: number;
+}) {
+  const router = useRouter();
+  const [missing, setMissing] = useState(initialMissing);
+  const [running, setRunning] = useState(false);
+  const [error, setError] = useState<string>();
+  const [startedWith, setStartedWith] = useState(0);
+
+  async function generate() {
+    setRunning(true);
+    setError(undefined);
+    setStartedWith(missing);
+    for (;;) {
+      const res = await generatePackAudio(productId).catch(() => ({
+        total,
+        missing,
+        error: "Connexion perdue. Réessaie.",
+        retryAfter: undefined,
+      }));
+      setMissing(res.missing);
+      if (res.error) {
+        setError(res.error);
+        break;
+      }
+      if (res.missing === 0) break;
+      await new Promise((r) => setTimeout(r, (res.retryAfter ?? 0) * 1000 || AUDIO_PAUSE_MS));
+    }
+    setRunning(false);
+    router.refresh();
+  }
+
+  const minutes = Math.ceil((missing * AUDIO_PAUSE_MS) / 60000);
+  const done = startedWith - missing;
+
+  return (
+    <div className="space-y-3">
+      <p className="text-sm text-ink-soft">
+        Chaque mot et chaque phrase est lu par une voix de qualité (arabe, français, anglais),
+        la même sur tous les téléphones. Après avoir modifié ou importé des mots, génère les
+        audios qui manquent ; en attendant, la page utilise la voix du téléphone.
+      </p>
+      <p className="text-sm font-bold">
+        {total === 0
+          ? "Aucune carte pour l’instant."
+          : missing === 0
+            ? `✓ Les ${total} audios sont prêts.`
+            : `${total - missing} / ${total} audios prêts · ${missing} à générer (~${minutes} min)`}
+      </p>
+      {running && (
+        <div className="space-y-1">
+          <div className="h-2 overflow-hidden rounded-full bg-paper-deep">
+            <div
+              className="h-full bg-brand transition-all"
+              style={{ width: `${startedWith ? (done / startedWith) * 100 : 0}%` }}
+            />
+          </div>
+          <p className="text-xs text-ink-soft">
+            Génération… {done} / {startedWith}. Garde cette page ouverte.
+          </p>
+        </div>
+      )}
+      {error && (
+        <p className="rounded-lg border border-riso-orange bg-riso-orange/10 p-3 text-sm text-riso-orange">
+          {error}
+        </p>
+      )}
+      {missing > 0 && (
+        <button type="button" onClick={generate} disabled={running} className="btn btn-brand">
+          {running ? "…" : `Générer les ${missing} audios manquants`}
+        </button>
+      )}
+    </div>
   );
 }
 

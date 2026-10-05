@@ -4,14 +4,18 @@ import { notFound } from "next/navigation";
 import { savePackCard } from "@/app/[lang]/admin/(dash)/actions";
 import {
   DeletePackCardButton,
+  PackAudioGenerate,
   PackCardImagesUpload,
   PackCardsImport,
 } from "@/components/admin/pack-cards";
 import { getPackCards, getProductById } from "@/lib/data";
 import type { PackCard } from "@/lib/data/types";
+import { packAudioStatus } from "@/lib/pack-audio";
 import { listenUrl, requestOrigin } from "@/lib/pack-qr";
 
 export const dynamic = "force-dynamic";
+// Room for the audio button's batches of Azure calls (generatePackAudio).
+export const maxDuration = 60;
 
 /** An audio pack's cards: words, images and the QR codes to print. */
 export default async function AdminPackCardsPage({
@@ -22,7 +26,11 @@ export default async function AdminPackCardsPage({
   const { lang, id } = await params;
   const product = await getProductById(id);
   if (!product) notFound();
-  const [cards, origin] = await Promise.all([getPackCards(id), requestOrigin()]);
+  const [cards, origin, audio] = await Promise.all([
+    getPackCards(id),
+    requestOrigin(),
+    packAudioStatus(id),
+  ]);
   const missingImages = cards.filter((c) => !c.image).length;
 
   return (
@@ -58,7 +66,16 @@ export default async function AdminPackCardsPage({
         <PackCardImagesUpload productId={id} />
       </Section>
 
-      <Section title="3. Les QR codes à imprimer">
+      <Section title="3. Les audios">
+        <PackAudioGenerate
+          key={`${audio.total}-${audio.missing.length}`}
+          productId={id}
+          total={audio.total}
+          missing={audio.missing.length}
+        />
+      </Section>
+
+      <Section title="4. Les QR codes à imprimer">
         <p className="text-sm text-ink-soft">
           Un QR code par carte, à placer sur la carte dans le design. Chacun ouvre la page
           d’écoute de sa carte, par exemple{" "}

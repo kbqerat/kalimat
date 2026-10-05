@@ -24,7 +24,9 @@ import {
   upsertPackCardWords,
   upsertProduct,
 } from "@/lib/data";
+import { RateLimited, SPACING_MS, storeClip, synthesize } from "@/lib/audio";
 import { slugify, uniqueSlug } from "@/lib/format";
+import { audioStore, packAudioStatus } from "@/lib/pack-audio";
 import { PRODUCT_TYPES, type Collection, type Localized, type Product } from "@/lib/data/types";
 import {
   deleteUploadedImage,
@@ -462,6 +464,46 @@ export async function removePackCard(formData: FormData): Promise<void> {
   if (image) await deleteUploadedImage(image);
   revalidatePath(`/${lang}/admin/products/${id}/cards`);
   revalidateListenPages(product.slug);
+}
+
+export interface PackAudioProgress {
+  total: number;
+  missing: number;
+  error?: string;
+  /** Azure's rate limit was hit: wait this many seconds before the next call. */
+  retryAfter?: number;
+}
+
+// Clips per call: Azure's free tier allows one every ~3 s, and a request
+// must stay short, so the admin button calls this again until none is left.
+const AUDIO_BATCH = 3;
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/** Generates a few of a pack's missing audio clips (see src/lib/audio.ts). */
+export async function generatePackAudio(productId: string): Promise<PackAudioProgress> {
+  if (!(await isAdmin())) return { total: 0, missing: 0, error: "Non autorisé." };
+  if (!process.env.AZURE_SPEECH_KEY || !process.env.AZURE_SPEECH_REGION)
+    return {
+      total: 0,
+      missing: 0,
+      error: "Clé Azure manquante sur le serveur (AZURE_SPEECH_KEY / AZURE_SPEECH_REGION).",
+    };
+
+  const { total, missing } = await packAudioStatus(productId);
+  let made = 0;
+  try {
+    for (const { file, locale, text } of missing.slice(0, AUDIO_BATCH)) {
+      if (made > 0) await sleep(SPACING_MS);
+      await storeClip(audioStore(), file, await synthesize(locale, text));
+      made++;
+    }
+  } catch (err) {
+    if (err instanceof RateLimited)
+      return { total, missing: missing.length - made, retryAfter: err.retryAfter };
+    console.error(err);
+    return { total, missing: missing.length - made, error: "Échec de la génération (Azure)." };
+  }
+  return { total, missing: missing.length - made };
 }
 
 /* ----------------------------- collections ------------------------------ */

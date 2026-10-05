@@ -2,12 +2,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { CardPlayer } from "@/components/listen/card-player";
-import { dir, isLocale, type Locale } from "@/i18n/config";
+import { CardPlayer, type CardAudio } from "@/components/listen/card-player";
+import { dir, isLocale, locales, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { localeHref } from "@/i18n/routing";
 import { t } from "@/i18n/t";
+import { audioUrl } from "@/lib/audio";
 import { getAudioPack, getPackCards } from "@/lib/data";
+import type { Localized } from "@/lib/data/types";
 
 // Rendered on first visit, then cached (see the storefront layout's revalidate).
 export function generateStaticParams() {
@@ -46,6 +48,14 @@ export default async function ListenCardPage({
   const prev = cards[i - 1];
   const next = cards[i + 1];
   const last = cards[cards.length - 1].n;
+  const clips = (l: Localized) =>
+    Object.fromEntries(
+      locales.filter((k) => l[k]?.trim()).map((k) => [k, audioUrl(k, l[k])]),
+    );
+  const audio: CardAudio = {
+    word: clips(card.word),
+    sentence: card.sentence && clips(card.sentence),
+  };
   const [back, forward] = dir(locale) === "rtl" ? ["→", "←"] : ["←", "→"];
 
   return (
@@ -75,6 +85,7 @@ export default async function ListenCardPage({
           key={card.n}
           word={card.word}
           sentence={card.sentence}
+          audio={audio}
           labels={{
             listen: dict.listen.listen,
             listenAll: dict.listen.listenAll,

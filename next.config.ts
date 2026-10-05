@@ -2,8 +2,8 @@ import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV === "development";
 
-// Admin uploads (product photos, card images) are served from the Supabase
-// Storage bucket, on the project's own domain.
+// Admin uploads (product photos, card images) and the listen pages' audio
+// clips are served from the Supabase Storage bucket, on the project's own domain.
 const supabaseOrigin = process.env.NEXT_PUBLIC_SUPABASE_URL
   ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).origin
   : "";
@@ -19,6 +19,7 @@ const cspHeader = `
   script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""};
   style-src 'self' 'unsafe-inline';
   img-src 'self' data: blob: ${supabaseOrigin};
+  media-src 'self' ${supabaseOrigin};
   font-src 'self' data:;
   connect-src 'self'${isDev ? " ws:" : ""};
   frame-src https://www.openstreetmap.org;
