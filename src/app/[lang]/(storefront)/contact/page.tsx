@@ -30,7 +30,6 @@ export default async function ContactPage({
   const bbox = [lon - 0.045, lat - 0.03, lon + 0.045, lat + 0.03].join(",");
   const mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lon}`;
   const mapLink = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
-  const telHref = `tel:${settings.contactPhone.replace(/[^+\d]/g, "")}`;
 
   const infoCards = [
     {
@@ -38,13 +37,6 @@ export default async function ContactPage({
       tint: "bg-brand/10",
       label: dict.contact.addressTitle,
       value: CONTACT_CITY,
-    },
-    {
-      icon: "📞",
-      tint: "bg-riso-teal/10",
-      label: dict.contact.phoneTitle,
-      value: settings.contactPhone,
-      href: telHref,
     },
     {
       icon: "✉️",
@@ -69,16 +61,13 @@ export default async function ContactPage({
         </p>
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-          <a href={telHref} className="btn btn-primary">
-            📞 {dict.contact.callCta}
-          </a>
-          <a href={`mailto:${settings.contactEmail}`} className="btn btn-ghost">
+          <a href={`mailto:${settings.contactEmail}`} className="btn btn-primary">
             ✉️ {dict.contact.emailCta}
           </a>
         </div>
       </header>
 
-      <div className="mt-10 grid gap-4 sm:grid-cols-3 sm:gap-5">
+      <div className="mt-10 grid gap-4 sm:grid-cols-2 sm:gap-5">
         {infoCards.map((c) => {
           const Wrapper = c.href ? "a" : "div";
           return (

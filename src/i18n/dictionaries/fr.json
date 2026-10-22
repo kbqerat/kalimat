@@ -54,9 +54,6 @@
     "reviewsTitle": "+4,8/5 avis",
     "reviewsSub": "Clients satisfaits"
   },
-  "whatsapp": {
-    "cta": "Discuter sur WhatsApp"
-  },
   "testimonials": {
     "eyebrow": "Avis clients",
     "title": "Ce que disent les parents",
@@ -84,7 +81,7 @@
         "name": "Karim L.",
         "city": "Fès",
         "rating": 5,
-        "text": "Service client très réactif sur WhatsApp, et les cartes sont solides et bien plastifiées."
+        "text": "Service client très réactif, et les cartes sont solides et bien plastifiées."
       }
     ]
   },
@@ -190,10 +187,8 @@
   "contact": {
     "title": "Contactez-nous",
     "subtitle": "Une question sur une commande ou un produit ? On vous répond avec plaisir.",
-    "callCta": "Appeler",
     "emailCta": "Écrire un email",
     "addressTitle": "Adresse",
-    "phoneTitle": "Téléphone",
     "emailTitle": "Email",
     "hoursTitle": "Horaires",
     "hours": "Lun–Sam, 9h–18h",

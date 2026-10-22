@@ -51,17 +51,7 @@ export function SettingsForm({ lang, settings }: { lang: string; settings: Setti
         </label>
       </div>
 
-      <div className="grid gap-4 rounded-xl border border-line p-4 sm:grid-cols-2">
-        <label className="block">
-          <span className="text-xs text-ink-soft">Téléphone (affiché sur le site)</span>
-          <input
-            name="contactPhone"
-            dir="ltr"
-            defaultValue={settings.contactPhone}
-            required
-            className="field mt-1"
-          />
-        </label>
+      <div className="rounded-xl border border-line p-4">
         <label className="block">
           <span className="text-xs text-ink-soft">Email de contact</span>
           <input
@@ -69,19 +59,6 @@ export function SettingsForm({ lang, settings }: { lang: string; settings: Setti
             type="email"
             dir="ltr"
             defaultValue={settings.contactEmail}
-            required
-            className="field mt-1"
-          />
-        </label>
-        <label className="block sm:col-span-2">
-          <span className="text-xs text-ink-soft">
-            Numéro WhatsApp — indicatif pays + numéro, sans espaces ni &quot;+&quot;
-          </span>
-          <input
-            name="whatsappNumber"
-            dir="ltr"
-            placeholder="212600029060"
-            defaultValue={settings.whatsappNumber}
             required
             className="field mt-1"
           />

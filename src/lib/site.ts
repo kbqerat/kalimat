@@ -1,8 +1,8 @@
 /**
  * Store-wide configuration. The values below are the seed defaults for the
  * editable `settings` table (see `src/db/schema.sql` and `getSettings()` in
- * `src/lib/data/index.ts`) — the site name, shipping fees and contact phone
- * / email / WhatsApp number are edited from /admin/settings and read from
+ * `src/lib/data/index.ts`) — the site name, shipping fees and contact
+ * email are edited from /admin/settings and read from
  * Supabase from there on. Everything else here (domain, map location, city
  * list) isn't part of that table and stays a plain constant.
  */
@@ -15,9 +15,7 @@ export const CONTACT_CITY = "Oujda, Maroc";
 export const CONTACT_COORDS = { lat: 34.6814, lon: -1.9086 };
 
 /** Seed defaults for `settings` — editable from /admin/settings once Supabase is connected. */
-export const CONTACT_PHONE = "0782-644852";
 export const CONTACT_EMAIL = "Medamri4848@gmail.com";
-export const WHATSAPP_NUMBER = "212782644852";
 export const SHIPPING_FLAT_MAD = 25;
 export const FREE_SHIPPING_THRESHOLD_MAD = 180;
 

@@ -54,9 +54,6 @@
     "reviewsTitle": "+4.8/5 reviews",
     "reviewsSub": "Happy customers"
   },
-  "whatsapp": {
-    "cta": "Chat on WhatsApp"
-  },
   "testimonials": {
     "eyebrow": "Customer reviews",
     "title": "What parents are saying",
@@ -84,7 +81,7 @@
         "name": "Karim L.",
         "city": "Fès",
         "rating": 5,
-        "text": "Very responsive customer service on WhatsApp, and the cards are sturdy and well laminated."
+        "text": "Very responsive customer service, and the cards are sturdy and well laminated."
       }
     ]
   },
@@ -190,10 +187,8 @@
   "contact": {
     "title": "Contact us",
     "subtitle": "A question about an order or a product? We're happy to help.",
-    "callCta": "Call us",
     "emailCta": "Send an email",
     "addressTitle": "Address",
-    "phoneTitle": "Phone",
     "emailTitle": "Email",
     "hoursTitle": "Hours",
     "hours": "Mon–Sat, 9am–6pm",

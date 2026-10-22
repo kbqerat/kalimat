@@ -605,12 +605,7 @@ const settingsSchema = z.object({
   siteName: z.string().trim().min(1, "Le nom de la boutique est obligatoire."),
   shippingFlatMad: z.coerce.number().int().min(0).max(10000),
   freeShippingThresholdMad: z.coerce.number().int().min(0).max(1000000),
-  contactPhone: z.string().trim().min(1, "Le téléphone est obligatoire."),
   contactEmail: z.string().trim().email("Email invalide."),
-  whatsappNumber: z
-    .string()
-    .trim()
-    .regex(/^\d{9,15}$/, "Numéro WhatsApp invalide — chiffres uniquement, avec l'indicatif pays (ex. 212600029060)."),
 });
 
 export interface SettingsFormState {

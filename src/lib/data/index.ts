@@ -3,11 +3,9 @@ import "server-only";
 import { makeOrderRef } from "@/lib/order-ref";
 import {
   CONTACT_EMAIL,
-  CONTACT_PHONE,
   FREE_SHIPPING_THRESHOLD_MAD,
   SHIPPING_FLAT_MAD,
   SITE_NAME,
-  WHATSAPP_NUMBER,
   shippingFor,
 } from "@/lib/site";
 import { supabaseAdmin } from "@/lib/supabase";
@@ -56,9 +54,7 @@ const mockSettings: Settings = {
   siteName: SITE_NAME,
   shippingFlatMad: SHIPPING_FLAT_MAD,
   freeShippingThresholdMad: FREE_SHIPPING_THRESHOLD_MAD,
-  contactPhone: CONTACT_PHONE,
   contactEmail: CONTACT_EMAIL,
-  whatsappNumber: WHATSAPP_NUMBER,
 };
 
 function clone<T>(v: T): T {
@@ -150,9 +146,7 @@ function rowToSettings(row: any): Settings {
     siteName: row.site_name ?? SITE_NAME,
     shippingFlatMad: row.shipping_flat_mad,
     freeShippingThresholdMad: row.free_shipping_threshold,
-    contactPhone: row.store_phone ?? CONTACT_PHONE,
     contactEmail: row.contact_email ?? CONTACT_EMAIL,
-    whatsappNumber: row.whatsapp_number ?? WHATSAPP_NUMBER,
   };
 }
 
@@ -722,9 +716,7 @@ export async function updateSettings(settings: Settings): Promise<Settings> {
         site_name: settings.siteName,
         shipping_flat_mad: settings.shippingFlatMad,
         free_shipping_threshold: settings.freeShippingThresholdMad,
-        store_phone: settings.contactPhone,
         contact_email: settings.contactEmail,
-        whatsapp_number: settings.whatsappNumber,
       })
       .eq("id", 1);
     if (error) throw error;
