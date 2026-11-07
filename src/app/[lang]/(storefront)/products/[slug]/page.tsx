@@ -34,7 +34,21 @@ export async function generateMetadata({
   if (!isLocale(lang)) return {};
   const product = await getProductBySlug(slug);
   if (!product) return {};
-  return { title: product.title[lang], description: product.tagline[lang] };
+  // canonical and og:url are the exact URL this page is served at (locale
+  // included), so Facebook never sees a redirect between them. og:image comes
+  // from the sibling opengraph-image.ts.
+  const url = localeHref(lang, `/products/${product.slug}`);
+  return {
+    title: product.title[lang],
+    description: product.tagline[lang],
+    alternates: { canonical: url },
+    openGraph: {
+      type: "website",
+      url,
+      title: product.title[lang],
+      description: product.tagline[lang],
+    },
+  };
 }
 
 export default async function ProductPage({
